@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Run script file
         run: |
           export TAG=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's/\//-/g')
