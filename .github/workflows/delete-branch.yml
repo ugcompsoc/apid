@@ -21,8 +21,15 @@ jobs:
         with:
           # Fetch all commits
           fetch-depth: 0
+      
+      - name: Git branch and hash vars
+        id: vars
+        shell: bash
+        run: |
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/} | sed -r 's/\//-/g')"
+
       - name: Run script file
         run: |
-          export TAG=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's/\//-/g')
+          export TAG=${{ steps.vars.outputs.branch }}
           .github/workflows/delete-branch.sh
         shell: bash
