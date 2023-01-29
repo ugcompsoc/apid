@@ -1,5 +1,5 @@
 #!/bin/bash
-# Deletes the tag (branch image) passed in as the first argument
+# Deletes the tag (branch image) passed in as an environment variable
 
 if [ -z $TAG ]; then 
     echo "\e[32mDockerHub tag is not set...\e[0m"
