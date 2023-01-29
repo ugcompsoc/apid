@@ -24,5 +24,5 @@ jobs:
       - name: Run script file
         run: |
           export TAG=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's/\//-/g')
-          ./github/workflow/delete-branch.sh
+          ./github/workflows/delete-branch.sh
         shell: bash
