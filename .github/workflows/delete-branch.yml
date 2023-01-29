@@ -1,0 +1,24 @@
+name: ci-branch
+on:
+  delete:
+    branches:    
+      - '**'
+      - '!main'
+      - '!*-prerelease*'
+
+env:
+  DOCKERHUB_USERNAME: ugcompsoc
+  DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+  REPO: ugcompsoc/apid
+  TAG: ${{ $(echo ${GITHUB_REF#refs/heads/} | sed -r 's/\//-/g') }}
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run script file
+        run: |
+          ./github/workflow/delete-branch.sh
+        shell: bash
