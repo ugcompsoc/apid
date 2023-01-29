@@ -2,6 +2,11 @@
 
 Currently this is the framework for effectively CompSoc's APIv2 which will include a proper CI/CD system.
 
+## Why am I here?
+I don't know. While you're here though, check out this [cool video](https://www.youtube.com/watch?v=dQw4w9WgXcQ).
+
+![XKCD Santa Sudo Meme](https://imgs.xkcd.com/comics/incident.png "He sees you when you're sleeping, he knows when you're awake, he's copied on /var/spool/mail/root, so be good for goodness' sake.")
+
 ## Contributing
 
 ### Repo Conventions
