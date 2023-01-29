@@ -1,4 +1,4 @@
-name: ci-branch
+name: delete-branch
 on:
   delete:
     branches:    
@@ -10,7 +10,6 @@ env:
   DOCKERHUB_USERNAME: ugcompsoc
   DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
   REPO: ugcompsoc/apid
-  TAG: ${{ $(echo ${GITHUB_REF#refs/heads/} | sed -r 's/\//-/g') }}
 
 jobs:
   docker:
@@ -20,5 +19,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run script file
         run: |
+          export TAG=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's/\//-/g')
           ./github/workflow/delete-branch.sh
         shell: bash
