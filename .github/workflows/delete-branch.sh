@@ -6,7 +6,9 @@ if [ -z $TAG ]; then
     exit 1
 fi
 
+TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'${DOCKERHUB_USERNAME}'", "password": "'${DOCKERHUB_PASSWORD}'"}' https://hub.docker.com/v2/users/login/ | grep -Po '"token":"*\K[^"]*')
+
 curl -i -X DELETE \
   -H "Accept: application/json" \
-  -H "Authorization: JWT $DOCKERHUB_PASSWORD" \
-  https://hub.docker.com/v2/repositories/$DOCKERHUB_USERNAME/$REPO/tags/$TAG/
+  -H "Authorization: Bearer $TOKEN" \
+  "https://hub.docker.com/v2/repositories/${DOCKERHUB_USERNAME}/${REPO}/tags/${TAG}/"
