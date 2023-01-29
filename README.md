@@ -39,7 +39,7 @@ There is a git hook that has been set up to help you create messaging and won't 
 ```
 
 ##### Can I just not?
-You can 'just not' if you want. The plan in the future is to implement a workflow that verifies commits follow this convention and, if not followed, will block commits.
+You can 'just not' if you want. ~~The plan in the future is to implement a workflow that verifies commits follow this convention and, if not followed, will block commits.~~
 
 If there is a legitimate reason for not following this convention, you can use:
 ```
