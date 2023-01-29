@@ -31,6 +31,6 @@ jobs:
       - name: Run script file
         run: |
           cat ${{ github.event_path }}
-          export TAG=$(cat ${{ github.event_path }} | grep -Po '"ref":"*\K[^"]*')
+          export TAG=$(cat ${{ github.event_path }} | grep -Po '"ref": "*\K[^"]*')
           .github/workflows/delete-branch.sh
         shell: bash
