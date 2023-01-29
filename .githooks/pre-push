@@ -9,6 +9,13 @@
 # get the path to this script file
 DIR=$(dirname "$0")
 
-#if [ -s FILE_NEEDED_TO_RUN_TESTS ]; then
-#	## Run Unit Tests
-#fi
+if [ -s go.mod ]; then
+    ## Run Unit Tests
+    go test ./...
+
+    if [[ $? != 0 ]]; then
+        echo -e "\e[31m> unit tests did not successfully pass\e[0m"
+        echo -e "> address unit test failures and attempt to push again"
+        exit 1
+    fi
+fi
