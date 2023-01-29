@@ -6,7 +6,7 @@ on:
       - '!main'     # excludes main
 
 env:
-  DOCKER_USERNAME: ugcompsoc
+  DOCKERHUB_USERNAME: ugcompsoc
   REPO: ugcompsoc/apid
 
 jobs:
