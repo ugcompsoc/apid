@@ -27,11 +27,8 @@ jobs:
       - name: Install dependencies
         run: go get . || true
 
-      - name: Build
-        run: go build -v -o bin/ ./cmd/...
-
       - name: Test with the Go CLI
-        run: go test
+        run: go test ./...
 
       - name: Set environment variables
         run: |
