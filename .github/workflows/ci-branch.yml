@@ -37,7 +37,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ${{ env.REPO }}:latest,${{ env.REPO }}:${{ steps.vars.outputs.branch }}
+          tags: ${{ env.REPO }}:latest,${{ env.REPO }}:branch/${{ steps.vars.outputs.branch }}
           labels: |
             maintainer=McGovMan
             maintainer=UGCompSoc
