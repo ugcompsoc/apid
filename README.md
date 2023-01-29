@@ -35,7 +35,7 @@ The subject should be limited to 50 characters and can describe your change. If 
 
 There is a git hook that has been set up to help you create messaging and won't let you commit unless you do it right. All you need to do is execute the following script once after you clone the repo:
 ```
-    ./.githooks/git-hooks-config.sh
+    .githooks/git-hooks-config.sh
 ```
 
 ##### Can I just not?
