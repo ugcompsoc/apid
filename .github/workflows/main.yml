@@ -1,8 +1,16 @@
-name: ci-main
+name: 'Main Pipeline'
+
+# **What it does**: Builds unstable image from main branch and deploys to staging
+# **Why we have it**: To allow code to be manually checked in a production like environment.
+# **Who does it impact**: Staging. Be less careful than production.
+
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Branch Pipeline]
+    types: 
+      - requested
+    branches: [main]
 
 env:
   DOCKERHUB_USERNAME: ugcompsoc
@@ -11,25 +19,8 @@ env:
 jobs:
   docker:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 5
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          # Fetch all commits
-          fetch-depth: 0
-      
-      - name: Setup Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: '1.19.x'
-      
-      - name: Install dependencies
-        run: go get . || true
-
-      - name: Test with the Go CLI
-        run: go test ./...
-
       - name: Semantic versioning
         id: versioning
         uses: PaulHatch/semantic-version@v4.0.2
@@ -50,8 +41,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ${{ env.REPO }}:latest,${{ env.REPO }}:${{ steps.versioning.outputs.version }}
-
+          tags: ${{ env.REPO }}:latest,${{ env.REPO }}:${{ steps.versioning.outputs.version }},${{ env.REPO }}:unstable
+      
       - name: Create Release
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         uses: actions/create-release@v1

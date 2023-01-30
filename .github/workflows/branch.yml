@@ -1,0 +1,39 @@
+name: 'Branch Pipeline'
+
+# **What it does**: Build and push branch docker images to DockerHub.
+# **Why we have it**: To allow for images to be loaded up in sub-staging environments.
+# **Who does it impact**: Staging sub-environments. You can break them as much as you want.
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Test API On Push Pipeline]
+    types:
+      - completed
+
+env:
+  DOCKERHUB_USERNAME: ugcompsoc
+  REPO: ugcompsoc/apid
+
+jobs:
+  push-image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Git branch name
+        id: ids
+        shell: bash
+        run: |
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/} | sed -r 's/\//-/g')"
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push branch
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{ env.REPO }}:latest,${{ env.REPO }}:${{ steps.ids.outputs.branch }}

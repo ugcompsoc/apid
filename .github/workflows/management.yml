@@ -1,10 +1,16 @@
-name: delete-branch
+name: 'CI/CD Management Pipeline'
+
+# **What it does**: Manages some of the tasks that can be automated, such as deleting stale docker images.
+# **Why we have it**: Automate some of the cumbersome tasks.
+# **Who does it impact**: Branch docker images in DockerHub.
+
 on:
   delete:
     branches:    
       - '**'
-      - '!main'
-      - '!*-prerelease*'
+  release:
+    types:
+      - deleted
 
 env:
   DOCKERHUB_USERNAME: ugcompsoc
@@ -31,5 +37,5 @@ jobs:
       - name: Run script file
         run: |
           export TAG=$(cat ${{ github.event_path }} | grep -Po '"ref": "*\K[^"]*')
-          .github/workflows/delete-branch.sh
+          .github/workflow_scripts/delete-branch.sh
         shell: bash
