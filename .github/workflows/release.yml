@@ -7,7 +7,7 @@ name: 'Release Pipeline'
 on:
   push:
     tags:
-      - 'v*'
+      - '**'
 
 env:
   DOCKERHUB_USERNAME: ugcompsoc
