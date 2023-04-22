@@ -3,6 +3,7 @@
 DEV_ENV="dev"
 TEST_ENV="test"
 PROD_ENV="prod"
+API_ROOT_DOMAIN="testbox.compsoc.ie"
 FORCE_CONFIRMED_FILE="/tmp/apid_deployment_manager/forceConfirmed"
 
 # set initial vals
@@ -11,8 +12,6 @@ delete=false
 force=false
 environment=""
 docker_image=""
-api_root_domain="testbox.compsoc.ie"
-docker_image_env=""
 
 function info {
   echo 'University Of Galway Computer Society API Deployer'
@@ -63,21 +62,48 @@ function exitIfEnvSet {
 
 function getImageEnv() {
   if [[ "$1" =~ "^v[0-9]$" ]]; then
-    docker_api_image_env=$PROD_ENV
+    echo "$PROD_ENV"
   elif [[ "$1" == *"prerelease"* ]]; then
-    docker_api_image_env=$TEST_ENV
-  else
-    docker_api_image_env=$DEV_ENV
+    echo "$TEST_ENV"
   fi
+  echo "$DEV_ENV"
 }
 
-function containerExists {
+function doesContainerExists {
   if ! [ -z "$environment" ]; then 
     echo 'Error: more than one environment set.'
     echo ''
-    exit 1
+    return 1
   fi
 }
+
+function doesImageEnvMatchSelectedEnv {
+  if ! [ $(getImageEnv) = "$environment" ] && [ $force = false ]; then 
+    echo 'Error: Docker image environment does not match chosen environment.'
+    return 1
+  fi
+  return 0
+}
+
+function canForceScript {
+  if [ $force = true ] && ! [ -f "$FORCE_CONFIRMED_FILE" ]; then
+    touch $FORCE_CONFIRMED_FILE
+    echo 'Note: You have choosen to forcefully run this script. If you meant to do this,'
+    echo 'please rerun this script. If you didnt mean to do this, delete the forceConfirmed'
+    echo "file in $FORCE_CONFIRMED_FILE."
+    echo ''
+    return 1
+  elif [ -f "$FORCE_CONFIRMED_FILE" ]; then
+    echo 'Note: You have choosen to forcefully run this script.'
+    echo ''
+    return 0
+  fi
+  return 1
+}
+
+##############################################
+#  VERIFY USER INPUTS
+##############################################
 
 if [[ ${#} -eq 0 ]]; then
   info
@@ -153,36 +179,38 @@ if [ -z "$docker_image" ]; then
   exit 1
 fi
 
+##############################################
+#  
+##############################################
+
 if $delete; then
   # delete the container
   exit 0;
 fi
 
-if ! [ "$docker_api_image_env" = "$environment" ] && [ $force = false ]; then 
-  echo 'Error: Docker image environment does not match chosen environment.'
-  echo ''
-  exit 1
-elif [ $force = true ] && ! [ -f "$FORCE_CONFIRMED_FILE" ]; then
-  touch /tmp/forceConfirmed
-  echo 'Note: You have choosen to forcefully run this script. If you meant to do this,'
-  echo 'please rerun this script. If you didnt mean to do this, delete the forceConfirmed'
-  echo 'file.'
-  echo ''
-  exit 0
-fi
+#rm $FORCE_CONFIRMED_FILE || true
 
-rm $FORCE_CONFIRMED_FILE || true
-
-getImageEnv "$docker_api_image_tag"
+image_env=$(getImageEnv "$docker_image")
+image_tag=$(echo "$docker_image" | cut -d ':' -f 2)
 docker_api_domain=""
-if [ "prod" = "$docker_api_image_env" ]; then
-  docker_api_domain="${api_root_domain}";
-elif [ "test" = "$docker_api_image_env"  ]; then
-  docker_api_domain="dev.${api_root_domain}";
+if [ "prod" = "$image_env" ]; then
+  docker_api_domain="$API_ROOT_DOMAIN"
+elif [ "test" = "$image_env" ]; then
+  docker_api_domain="dev.$API_ROOT_DOMAIN"
 else
-  docker_api_domain="${docker_api_image_tag}.dev.${api_root_domain}";
+  docker_api_domain="${image_tag}.dev.$API_ROOT_DOMAIN"
 fi
 
 # Check if a container already exists, make a func that can check for existing ones so that delete pocess can use it too
-# Delete it and it's db or whatever else
+container_name="compsoc_apid_$image_tag"
+# Check if container exist and delete
+if [ $( docker ps -a -f name=$container_name | wc -l ) -eq 2 ]; then
+  docker rm -f $container_name
+  echo "Info: Recreating container with name $container_name"
+else
+  echo "Info: Container with name $container_name doesn't exist. Creating it."
+fi
+
 # spin it back up
+docker_message=$(docker run --name $container_name --network=web -d $docker_image)
+echo $docker_message
