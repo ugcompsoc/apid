@@ -1,7 +1,6 @@
 name: Deploy to environment
 
 on:
-  workflow_dispatch:
   workflow_call:
     inputs:
       image_name:

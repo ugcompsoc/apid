@@ -1,12 +1,12 @@
 name: Create and publish docker images
 
 on:
-  workflow_dispatch:
   workflow_call:
     inputs:
       image_names:
         description: "Provide all image names that you wish to publish the image under"
         required: false
+        type: string
         default: |
           ugcompsoc/apid:latest
           ugcompsoc/apid:dummy_tag
