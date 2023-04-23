@@ -28,7 +28,7 @@ jobs:
         ugcompsoc/apid:latest
   call-deployment:
     needs: [call-build-publish, get-branch-name]
-    uses: ./.github/workflow/reusable_deploy.yml
+    uses: ./.github/workflows/reusable_deploy.yml
     with:
       image_name: ${{ needs.get-branch-name.outputs.branch_name }}
       environment: DEV
