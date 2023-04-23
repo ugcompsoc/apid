@@ -9,7 +9,7 @@ on:
 
 jobs:
   call-test:
-    uses: .github/workflows/reusable_test.yml
+    uses: ./.github/workflows/reusable_test.yml
   get-branch-name:
     runs-on: ubuntu-latest
     timeout-minutes: 1
@@ -21,14 +21,14 @@ jobs:
           echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/} | sed -r 's/\//-/g')"
   call-build-publish:
     needs: [call-test, get-branch-name]
-    uses: .github/workflows/reusable_build_publish.yml
+    uses: ./.github/workflows/reusable_build_publish.yml
     with:
       image_names: |
         ugcompsoc/apid:${{ needs.get-branch-name.outputs.branch_name }}
         ugcompsoc/apid:latest
   call-deployment:
     needs: [call-build-publish, get-branch-name]
-    uses: .github/workflow/reusable_deploy.yml
+    uses: ./.github/workflow/reusable_deploy.yml
     with:
       image_name: ${{ needs.get-branch-name.outputs.branch_name }}
       environment: DEV

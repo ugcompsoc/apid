@@ -29,7 +29,7 @@ on:
 jobs:
   call-remove:
     needs: [get-branch-name]
-    uses: .github/workflows/reusable_remove.yml
+    uses: ./.github/workflows/reusable_remove.yml
     with:
       image_name: ${{ inputs.image_name}}
   deployment:
