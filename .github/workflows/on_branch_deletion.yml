@@ -22,3 +22,4 @@ jobs:
     uses: ./.github/workflows/reusable_remove.yml
     with:
       image_name: ${{ needs.get-branch-name.outputs.branch_name }}
+    secrets: inherit
