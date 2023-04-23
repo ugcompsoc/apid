@@ -1,0 +1,36 @@
+name: Create and publish docker images
+
+on:
+  workflow_call:
+    inputs:
+      image_names:
+        description: "Provide all image names that you wish to publish the image under"
+        required: false
+        type: string
+        default: |
+          ugcompsoc/apid:latest
+          ugcompsoc/apid:dummy_tag
+    secrets:
+      DOCKER_REGISTRY_USERNAME:
+        description: "Provide the username of the account that has access to publish to the registry"
+        required: true
+      DOCKER_REGISTRY_PASSWORD:
+        description: "Provide the password for the account that has access to publish to the registry"
+        required: true
+
+jobs:
+  build-push-image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+
+      - name: Build and push branch
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{ inputs.image_names }}
