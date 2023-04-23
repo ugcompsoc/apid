@@ -7,7 +7,7 @@ on:
 
 jobs:
   call-test:
-    uses: ./.github/workflows/reusable_test.yml
+    uses: ./.github/workflows/reusable_test.yml@main
   get-version:
     runs-on: ubuntu-latest
     timeout-minutes: 1
@@ -23,7 +23,7 @@ jobs:
           format: "v${major}.${minor}.${patch}-prerelease${increment}"
   call-build-publish:
     needs: [call-test, get-version]
-    uses: ./.github/workflows/reusable_build_publish.yml
+    uses: ./.github/workflows/reusable_build_publish.yml@main
     with:
       image_names: |
         ugcompsoc/apid:${{ needs.get-version.steps.versioning.outputs.version }}
@@ -31,7 +31,7 @@ jobs:
         ugcompsoc/apid:main
   call-deployment:
     needs: [call-build-publish, get-version]
-    uses: ./.github/workflow/reusable_deploy.yml
+    uses: ./.github/workflow/reusable_deploy.yml@main
     with:
       image_name: ${{ needs.get-version.steps.versioning.outputs.version }}
       environment: TEST
