@@ -1,0 +1,21 @@
+name: On branch deletion, remove the container running in the environment
+
+on:
+  delete:
+    branches:
+      - '**'
+      - '!main'
+      - '!master'
+
+jobs:
+  call-remove-deployment:
+    uses: ./.github/workflows/reusable_remove_deployment.yml
+    with:
+      tag_name: ${{ github.event.ref }}
+    secrets: inherit
+  call-remove-image:
+    needs: [call-remove-deployment]
+    uses: ./.github/workflows/reusable_remove_image.yml
+    with:
+      tag_name: ${{ github.event.ref }}
+    secrets: inherit

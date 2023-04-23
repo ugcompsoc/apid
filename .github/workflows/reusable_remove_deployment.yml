@@ -1,0 +1,34 @@
+on:
+  workflow_call:
+    inputs:
+      tag_name:
+        description: "Provide all image name you wish to remove the deployment for"
+        required: true
+        type: string
+    secrets:
+      SSH_HOST:
+        description: "Provide the FQDN or IP address of the server to deploy on"
+        required: true
+      SSH_USERNAME:
+        description: "Provide the username to login with"
+        required: true
+      SSH_SECRET:
+        description: "Provide the private SSH key to login with"
+        required: true
+      SSH_PORT:
+        description: "Provide the SSH port"
+        required: true
+
+jobs:
+  remove-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove deployment from environment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_SECRET }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            docker rm compsoc_apid_${{ inputs.tag_name }} --force 

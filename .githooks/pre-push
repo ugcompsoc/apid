@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# Run the following command in the root of your project to install this pre-push hook:
+# cp git-hooks/pre-push .git/hooks/pre-push; chmod 700 .git/hooks/pre-push
+# @author : Mak Sophea (Extended By Conor Mc Govern
+# @version : 1.0
+#
+
+# get the path to this script file
+DIR=$(dirname "$0")
+
+if [ -s go.mod ]; then
+    ## Run Unit Tests
+    go test ./...
+
+    if [[ $? != 0 ]]; then
+        echo -e "\e[31m> unit tests did not successfully pass\e[0m"
+        echo -e "> address unit test failures and attempt to push again"
+        exit 1
+    fi
+fi
