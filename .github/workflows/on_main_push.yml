@@ -11,6 +11,7 @@ jobs:
   get-version:
     runs-on: ubuntu-latest
     timeout-minutes: 1
+    steps:
       - name: Semantic versioning
         id: versioning
         uses: PaulHatch/semantic-version@v4.0.2

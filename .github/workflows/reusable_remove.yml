@@ -5,6 +5,7 @@ on:
       image_name:
         description: "Provide all image name you wish to remove the deployment for"
         required: true
+        type: string
     secrets:
       ssh_host:
         description: "Provide the FQDN or IP address of the server to deploy on"
@@ -15,7 +16,7 @@ on:
       ssh_secret:
         description: "Provide the private SSH key to login with"
         required: true
-      ssh_username:
+      ssh_port:
         description: "Provide the SSH port"
         required: true
       docker_registry_username:
