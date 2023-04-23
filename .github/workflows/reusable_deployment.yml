@@ -13,16 +13,16 @@ on:
         required: true
         default: DEV
     secrets:
-      ssh_host:
+      SSH_HOST:
         description: "Provide the FQDN or IP address of the server to deploy on"
         required: true
-      ssh_username:
+      SSH_USERNAME:
         description: "Provide the username to login with"
         required: true
-      ssh_secret:
+      SSH_SECRET:
         description: "Provide the private SSH key to login with"
         required: true
-      ssh_port:
+      SSH_PORT:
         description: "Provide the SSH port"
         required: true
 
@@ -39,9 +39,9 @@ jobs:
       - name: Deploy To environment
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.ssh_host }}
-          username: ${{ secrets.ssh_username }}
-          key: ${{ secrets.ssh_secret }}
-          port: ${{ secrets.ssh_port }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_SECRET }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             echo "Hello World - ${{ inputs.image_name }}"

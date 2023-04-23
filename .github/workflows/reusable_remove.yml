@@ -6,22 +6,22 @@ on:
         required: true
         type: string
     secrets:
-      ssh_host:
+      SSH_HOST:
         description: "Provide the FQDN or IP address of the server to deploy on"
         required: true
-      ssh_username:
+      SSH_USERNAME:
         description: "Provide the username to login with"
         required: true
-      ssh_secret:
+      SSH_SECRET:
         description: "Provide the private SSH key to login with"
         required: true
-      ssh_port:
+      SSH_PORT:
         description: "Provide the SSH port"
         required: true
-      docker_registry_username:
+      DOCKER_REGISTRY_USERNAME:
         description: "Provide the username of the account that has access to publish to the registry"
         required: true
-      docker_registry_password:
+      DOCKER_REGISTRY_PASSWORD:
         description: "Provide the password for the account that has access to publish to the registry"
         required: true
 
@@ -32,10 +32,10 @@ jobs:
       - name: Remove deployment from environment
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.ssh_host }}
-          username: ${{ secrets.ssh_username }}
-          key: ${{ secrets.ssh_secret }}
-          port: ${{ secrets.ssh_port }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_SECRET }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             echo "Hello World Removal - ${{ inputs.image_name }}"
   remove-image:
@@ -52,7 +52,7 @@ jobs:
           echo $REPO
           echo $TAG
           echo "> Requesting token from https://hub.docker.com/v2/users/login/"
-          TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'${{ secrets.docker_registry_username }}'", "password": "'${{ secrets.docker_registry_password }}'"}' https://hub.docker.com/v2/users/login/ | grep -Po '"token":"*\K[^"]*')
+          TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'${{ secrets.DOCKER_REGISTRY_USERNAME }}'", "password": "'${{ secrets.DOCKER_REGISTRY_PASSWORD }}'"}' https://hub.docker.com/v2/users/login/ | grep -Po '"token":"*\K[^"]*')
           echo "> Requesting deletion of $TAG from $REPO -> https://hub.docker.com/v2/repositories/${REPO}/tags/${TAG}/"
           curl -i -X DELETE \
             -H "Accept: application/json" \
