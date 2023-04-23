@@ -8,19 +8,31 @@ on:
 jobs:
   call-test:
     uses: ./.github/workflows/reusable_test.yml
+  get-tag-name:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - name: Get tag name
+        id: tag
+        shell: bash
+        run: |
+          GITHUB_REF=${{ github.event.ref }}
+          echo ::set-output name=tag::${GITHUB_REF/refs\/tags\//} || true
   call-build-publish:
-    needs: [call-test]
+    needs: [call-test, get-tag-name]
     uses: ./.github/workflows/reusable_build_publish.yml
     with:
       image_names: |
-        ugcompsoc/apid:${{ github.event.ref }}
+        ugcompsoc/apid:${{ needs.get-tag-name.outputs.tag }}
         ugcompsoc/apid:stable
         ugcompsoc/apid:latest
     secrets: inherit
   call-deployment:
-    needs: [call-build-publish]
+    needs: [call-build-publish, get-tag-name]
     uses: ./.github/workflows/reusable_deployment.yml
     with:
-      tag_name: ${{ github.event.ref }}
+      tag_name: ${{ needs.get-tag-name.outputs.tag }}
       environment: PROD
     secrets: inherit
