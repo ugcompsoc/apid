@@ -1,0 +1,60 @@
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      image_name:
+        description: "Provide all image name you wish to remove the deployment for"
+        required: true
+    secrets:
+      ssh_host:
+        description: "Provide the FQDN or IP address of the server to deploy on"
+        required: true
+      ssh_username:
+        description: "Provide the username to login with"
+        required: true
+      ssh_secret:
+        description: "Provide the private SSH key to login with"
+        required: true
+      ssh_username:
+        description: "Provide the SSH port"
+        required: true
+      docker_registry_username:
+        description: "Provide the username of the account that has access to publish to the registry"
+        required: true
+      docker_registry_password:
+        description: "Provide the password for the account that has access to publish to the registry"
+        required: true
+
+jobs:
+  remove-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove deployment from environment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.ssh_host }}
+          username: ${{ secrets.ssh_username }}
+          key: ${{ secrets.ssh_secret }}
+          port: ${{ secrets.ssh_port }}
+          script: |
+            echo "Hello World Removal - ${{ inputs.image_name }}"
+  remove-image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Git branch name
+        id: branch_name
+        shell: bash
+        run: |
+          REPO_TAG=$(echo ${{ inputs.image_name }} | cut -d '/' -f 2)
+          REPO=$(echo $REPO_TAG | cut -d ':' -f 1)
+          TAG=$(echo $REPO_TAG | cut -d ':' -f 2)
+          echo $REPO
+          echo $TAG
+          echo "> Requesting token from https://hub.docker.com/v2/users/login/"
+          TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'${{ secrets.docker_registry_username }}'", "password": "'${{ secrets.docker_registry_password }}'"}' https://hub.docker.com/v2/users/login/ | grep -Po '"token":"*\K[^"]*')
+          echo "> Requesting deletion of $TAG from $REPO -> https://hub.docker.com/v2/repositories/${REPO}/tags/${TAG}/"
+          curl -i -X DELETE \
+            -H "Accept: application/json" \
+            -H "Authorization: Bearer $TOKEN" \
+            "https://hub.docker.com/v2/repositories/${REPO}/tags/${TAG}/"

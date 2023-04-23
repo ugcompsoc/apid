@@ -1,0 +1,36 @@
+name: 'Main Pipeline'
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  call-test:
+    uses: .github/workflows/reusable_test.yml
+  get-version:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+      - name: Semantic versioning
+        id: versioning
+        uses: PaulHatch/semantic-version@v4.0.2
+        with:
+          branch: main
+          tag_prefix: "v"
+          major_pattern: "/(BREAKING CHANGE:|!)/"
+          minor_pattern: "feat:"
+          format: "v${major}.${minor}.${patch}-prerelease${increment}"
+  call-build-publish:
+    needs: [call-test, get-version]
+    uses: .github/workflows/reusable_build_publish.yml
+    with:
+      image_names: |
+        ugcompsoc/apid:${{ needs.get-version.steps.versioning.outputs.version }}
+        ugcompsoc/apid:latest
+        ugcompsoc/apid:main
+  call-deployment:
+    needs: [call-build-publish, get-version]
+    uses: .github/workflow/reusable_deploy.yml
+    with:
+      image_name: ${{ needs.get-version.steps.versioning.outputs.version }}
+      environment: TEST

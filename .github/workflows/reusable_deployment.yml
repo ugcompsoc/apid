@@ -1,0 +1,51 @@
+name: Deploy to environment
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      image_name:
+        description: "Provide all image name you wish to deploy"
+        required: true
+      environment:
+        type: choice
+        description: "Provide the environment you would like the image to be deployed on"
+        options:
+        - DEV
+        - TEST
+        - PROD
+        required: true
+        default: DEV
+    secrets:
+      ssh_host:
+        description: "Provide the FQDN or IP address of the server to deploy on"
+        required: true
+      ssh_username:
+        description: "Provide the username to login with"
+        required: true
+      ssh_secret:
+        description: "Provide the private SSH key to login with"
+        required: true
+      ssh_username:
+        description: "Provide the SSH port"
+        required: true
+
+jobs:
+  call-remove:
+    needs: [get-branch-name]
+    uses: .github/workflows/reusable_remove.yml
+    with:
+      image_name: ${{ inputs.image_name}}
+  deployment:
+    needs: [get-branch-name]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy To environment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.ssh_host }}
+          username: ${{ secrets.ssh_username }}
+          key: ${{ secrets.ssh_secret }}
+          port: ${{ secrets.ssh_port }}
+          script: |
+            echo "Hello World - ${{ inputs.image_name }}"

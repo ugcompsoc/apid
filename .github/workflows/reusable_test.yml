@@ -1,18 +1,8 @@
-name: 'Test API On Push Pipeline'
-
-# **What it does**: Sets up the go application, and runs unit tests.
-# **Why we have it**: To allow for tested code to be deployed to staging and production environments.
-# **Who does it impact**: Nothing. This workflow is used as a skeleton for other workflows.
+name: Run tests
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - '**'
-
-env:
-  DOCKERHUB_USERNAME: ugcompsoc
-  REPO: ugcompsoc/apid
+  workflow_call:
 
 jobs:
   unit-tests:
