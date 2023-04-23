@@ -1,7 +1,7 @@
 name: On branch deletion, remove the container running in the environment
 
 on:
-  push:
+  delete:
     branches:
       - '**'
       - '!main'
