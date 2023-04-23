@@ -35,6 +35,7 @@ jobs:
     with:
       image_names: |
         ugcompsoc/apid:${{ needs.get-version.outputs.version }}
+        ugcompsoc/apid:unstable
         ugcompsoc/apid:latest
     secrets: inherit
   call-deployment:
