@@ -11,6 +11,15 @@ I don't know. While you're here though, check out this [cool video](https://www.
 
 ## Contributing
 
+### Workflows
+
+There are many [workflows](.github/workflows) in this repository that handle testing the code, building the docker image, deploying the docker image to the respective environments, and handling deleting old deployments. These workflows are ran at various points of the software development cycle, the mains ones to mention are:
+- When a commit is pushed to a branch, the branch is deployed to its own environment at the URL: `{branch_name}.dev.apid.testbox.compsoc.ie (DEV)`.
+- When a PR is merged or commit is pushed to main, the same happens except it is deployed at the URL: `dev.apid.testbox.compsoc.ie (TEST)`.
+- When a tag is created, the same happened except it is deployed at the URL: `apid.testbox.compsoc.ie (PROD)`.
+
+On every branch or tag event, unit and API tests are also ran.
+
 ### Repo Conventions
 
 #### Conventional Commits
