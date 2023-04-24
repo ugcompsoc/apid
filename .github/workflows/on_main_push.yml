@@ -7,8 +7,8 @@ on:
       - 'master'
 
 jobs:
-  call-test:
-    uses: ./.github/workflows/reusable_test.yml
+  call-unit-tests:
+    uses: ./.github/workflows/reusable_unit_tests.yml
   get-version:
     runs-on: ubuntu-latest
     timeout-minutes: 1
@@ -30,7 +30,7 @@ jobs:
           minor_pattern: "feat:"
           format: "v${major}.${minor}.${patch}-prerelease${increment}"
   call-build-publish:
-    needs: [call-test, get-version]
+    needs: [call-unit-tests, get-version]
     uses: ./.github/workflows/reusable_build_publish.yml
     with:
       image_names: |
@@ -45,3 +45,9 @@ jobs:
       tag_name: ${{ needs.get-version.outputs.version }}
       environment: TEST
     secrets: inherit
+  call-api-tests:
+    needs: [call-deployment, get-version]
+    uses: ./.github/workflows/reusable_api_tests.yml
+    with:
+      tag_name: ${{ needs.get-version.outputs.version }}
+      environment: TEST

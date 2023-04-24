@@ -6,8 +6,8 @@ on:
       - 'v2.*'
 
 jobs:
-  call-test:
-    uses: ./.github/workflows/reusable_test.yml
+  call-unit-tests:
+    uses: ./.github/workflows/reusable_unit_tests.yml
   get-tag-name:
     runs-on: ubuntu-latest
     timeout-minutes: 1
@@ -21,7 +21,7 @@ jobs:
           GITHUB_REF=${{ github.event.ref }}
           echo ::set-output name=tag::${GITHUB_REF/refs\/tags\//} || true
   call-build-publish:
-    needs: [call-test, get-tag-name]
+    needs: [call-unit-tests, get-tag-name]
     uses: ./.github/workflows/reusable_build_publish.yml
     with:
       image_names: |

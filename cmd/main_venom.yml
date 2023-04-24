@@ -1,0 +1,15 @@
+name: Example Venom Test Suite
+
+testcases:
+- name: GET http testcase, with 5 seconds timeout
+  steps:
+  - type: http
+    method: GET
+    url: "{{.url}}/1.0/"
+    timeout: 5
+  assertions:
+    - result.statuscode ShouldEqual 200
+    - result.timeseconds ShouldBeLessThan 1
+    - result.bodyjson ShouldContainKey apis
+    - result.body ShouldContainSubstring /dedicated/server
+    - result.body ShouldContainSubstring /ipLoadbalancing
