@@ -2,6 +2,16 @@ name: Run API Tests
 
 on:
   workflow_call:
+    inputs:
+      tag_name:
+        description: "Provide the tag you wish to deploy"
+        type: string
+        required: true
+      environment:
+        type: string
+        description: "Provide the environment you would like the image to be deployed on, e.g. DEV, TEST or PROD"
+        required: true
+        default: DEV
 
 jobs:
   api-tests:
