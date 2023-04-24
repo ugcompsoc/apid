@@ -1,0 +1,14 @@
+name: Run API Tests
+
+on:
+  workflow_call:
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Dummy step
+        shell: bash
+        run: |
+          echo "Hello World - API Tests"
