@@ -11,4 +11,6 @@ jobs:
       - name: Dummy step
         shell: bash
         run: |
-          echo "Hello World - API Tests"
+          curl https://github.com/ovh/venom/releases/download/v1.1.0/venom.linux-amd64 -L -o /usr/local/bin/venom
+          chmod +x /usr/local/bin/venom
+          venom run **/*_venom.yml --var-from-file venom_vars.yml --output-dir test_results
