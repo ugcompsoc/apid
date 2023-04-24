@@ -31,5 +31,5 @@ jobs:
           key: ${{ secrets.SSH_SECRET }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            DOCKER_RESULTS=docker container ls -q --filter name=${{ inputs.tag_name }}
-            [ -z "$DOCKER_RESULTS" ] || docker rm $(DOCKER_RESULTS) --force
+            DOCKER_RESULTS=$(docker container ls -q --filter name=${{ inputs.tag_name }})
+            [ -z "$DOCKER_RESULTS" ] || docker rm $(docker container ls -q --filter name=${{ inputs.tag_name }}) --force
