@@ -22,6 +22,10 @@ On every branch or tag event, unit and API tests are also ran.
 
 ### Repo Conventions
 
+#### Workflows
+
+All workflows should pass on your commit, PR, whatever it be. If they don't, revert it, don't merge it. Figure out why they aren't passing.
+
 #### Conventional Commits
 This repo makes use of the 'conventional commits' convention. This means that all commits should be formatted using this convention. 
 
