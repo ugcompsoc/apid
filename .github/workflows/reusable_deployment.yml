@@ -27,11 +27,6 @@ on:
         required: true
 
 jobs:
-  call-remove:
-    uses: ./.github/workflows/reusable_remove_deployment.yml
-    with:
-      tag_name: ${{ inputs.tag_name}}
-    secrets: inherit
   get-url:
     runs-on: ubuntu-latest
     timeout-minutes: 1
@@ -46,7 +41,7 @@ jobs:
           [ ${{ inputs.environment }} = "TEST" ] && echo "##[set-output name=url;]$(echo dev.apid.testbox.compsoc.ie)" || true
           [ ${{ inputs.environment }} = "PROD" ] && echo "##[set-output name=url;]$(echo apid.testbox.compsoc.ie)" || true
   deployment:
-    needs: [get-url, call-remove]
+    needs: [get-url]
     runs-on: ubuntu-latest
     steps:
       - name: Deploy To environment

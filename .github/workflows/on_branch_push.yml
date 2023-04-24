@@ -29,6 +29,12 @@ jobs:
         ugcompsoc/apid:${{ needs.get-branch-name.outputs.branch_name }}
         ugcompsoc/apid:latest
     secrets: inherit
+  call-remove:
+    needs: [call-unit-tests, get-branch-name]
+    uses: ./.github/workflows/reusable_remove_deployment.yml
+    with:
+      tag_name: ${{ needs.get-branch-name.outputs.branch_name }}
+    secrets: inherit
   call-deployment:
     needs: [call-build-publish, get-branch-name]
     uses: ./.github/workflows/reusable_deployment.yml

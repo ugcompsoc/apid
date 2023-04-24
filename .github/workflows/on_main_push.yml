@@ -38,6 +38,12 @@ jobs:
         ugcompsoc/apid:unstable
         ugcompsoc/apid:latest
     secrets: inherit
+  call-remove:
+    needs: [call-unit-tests]
+    uses: ./.github/workflows/reusable_remove_deployment.yml
+    with:
+      tag_name: prerelease
+    secrets: inherit
   call-deployment:
     needs: [call-build-publish, get-version]
     uses: ./.github/workflows/reusable_deployment.yml

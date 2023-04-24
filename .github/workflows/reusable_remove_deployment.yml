@@ -31,4 +31,5 @@ jobs:
           key: ${{ secrets.SSH_SECRET }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            docker rm compsoc_apid_${{ inputs.tag_name }} --force 
+            DOCKER_RESULTS=docker container ls -q --filter name=${{ inputs.tag_name }}
+            [ -z "$DOCKER_RESULTS" ] || docker rm $(DOCKER_RESULTS) --force
