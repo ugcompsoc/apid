@@ -14,7 +14,21 @@ on:
         default: DEV
 
 jobs:
+  get-url:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    outputs:
+      url: ${{ steps.url.outputs.url }}
+    steps:
+      - name: Get API URL
+        id: url
+        shell: bash
+        run: |
+          echo "##[set-output name=url;]$(echo ${{ inputs.tag_name}}.dev.apid.testbox.compsoc.ie)" || true
+          [ ${{ inputs.environment }} = "TEST" ] && echo "##[set-output name=url;]$(echo dev.apid.testbox.compsoc.ie)" || true
+          [ ${{ inputs.environment }} = "PROD" ] && echo "##[set-output name=url;]$(echo apid.testbox.compsoc.ie)" || true
   api-tests:
+    needs: [get-url]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -28,4 +42,5 @@ jobs:
         run: |
           curl https://github.com/ovh/venom/releases/download/v1.1.0/venom.linux-amd64 -L -o /usr/local/bin/venom
           chmod +x /usr/local/bin/venom
-          venom run **/*_venom.yml --var-from-file venom_vars.yml --output-dir test_results
+          echo "url: 'https://${{ needs.get-url.outputs.url }}'" > venom_vars_tmp.yml
+          venom run venom/*.yml --var-from-file venom_vars_tmp.yml --output-dir test_results
