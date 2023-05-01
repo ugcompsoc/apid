@@ -52,14 +52,15 @@ jobs:
           key: ${{ secrets.SSH_SECRET }}
           port: ${{ secrets.SSH_PORT }}
           script: |
+            STRIPPED_TAG_NAME=$(echo "${{ inputs.tag_name }}" | sed 's#/#\-#g')
             docker run -d \
-              --name compsoc_apid_${{ inputs.tag_name }} \
+              --name compsoc_apid_$STRIPPED_TAG_NAME \
               --network=transit-public \
-              --label traefik.http.routers.ugcompsoc_apid_${{ inputs.tag_name }}.rule=Host\(\`${{ needs.get-url.outputs.url }}\`\) \
-              --label traefik.http.routers.ugcompsoc_apid_${{ inputs.tag_name }}.entrypoints=websecure \
-              --label traefik.http.routers.ugcompsoc_apid_${{ inputs.tag_name }}.tls=true \
-              --label traefik.http.routers.ugcompsoc_apid_${{ inputs.tag_name }}.tls.certresolver=myresolver \
-              --label traefik.http.services.ugcompsoc_apid_${{ inputs.tag_name }}.loadbalancer.server.port=8080 \
+              --label traefik.http.routers.ugcompsoc_apid_$STRIPPED_TAG_NAME.rule=Host\(\`${{ needs.get-url.outputs.url }}\`\) \
+              --label traefik.http.routers.ugcompsoc_apid_$STRIPPED_TAG_NAME.entrypoints=websecure \
+              --label traefik.http.routers.ugcompsoc_apid_$STRIPPED_TAG_NAME.tls=true \
+              --label traefik.http.routers.ugcompsoc_apid_$STRIPPED_TAG_NAME.tls.certresolver=myresolver \
+              --label traefik.http.services.ugcompsoc_apid_$STRIPPED_TAG_NAME.loadbalancer.server.port=8080 \
               --label traefik.docker.network=transit-public \
               --restart unless-stopped \
               ugcompsoc/apid:${{ inputs.tag_name }}
