@@ -1,12 +1,29 @@
 package main
 
-import "testing"
+import (
+	"testing"
+)
 
-func TestHello(t *testing.T) {
-	got := hello()
-	want := "Hello, world"
+func TestInit(t *testing.T) {
+	t.Run("///TODO", func(t *testing.T) {
 
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
-	}
+	})
+}
+
+func TestReload(t *testing.T) {
+	t.Run("///TODO", func(t *testing.T) {
+
+	})
+}
+
+func TestStop(t *testing.T) {
+	t.Run("///TODO", func(t *testing.T) {
+
+	})
+}
+
+func TestMain(t *testing.T) {
+	t.Run("///TODO", func(t *testing.T) {
+
+	})
 }

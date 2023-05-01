@@ -25,6 +25,7 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
 COPY --from=builder /go/src/app/bin/cmd /go/bin/api
+COPY --from=builder /go/src/app/apid.yml /run/config/
 
 USER small-user:small-user
 
@@ -34,5 +35,5 @@ LABEL "traefik.default.protocol"="http"
 LABEL "traefik.port"="80"
 LABEL "traefik.enable"="true"
 
-EXPOSE 80/tcp
+EXPOSE 8080/tcp
 ENTRYPOINT ["/go/bin/api"]

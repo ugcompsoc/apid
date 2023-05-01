@@ -52,13 +52,14 @@ jobs:
           key: ${{ secrets.SSH_SECRET }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            docker run \
+            docker run -d \
               --name compsoc_apid_${{ inputs.tag_name }} \
               --network=transit-public \
               --label traefik.http.routers.ugcompsoc_apid_${{ inputs.tag_name }}.rule=Host\(\`${{ needs.get-url.outputs.url }}\`\) \
               --label traefik.http.routers.ugcompsoc_apid_${{ inputs.tag_name }}.entrypoints=websecure \
               --label traefik.http.routers.ugcompsoc_apid_${{ inputs.tag_name }}.tls=true \
               --label traefik.http.routers.ugcompsoc_apid_${{ inputs.tag_name }}.tls.certresolver=myresolver \
+              --label traefik.http.services.ugcompsoc_apid_${{ inputs.tag_name }}.loadbalancer.server.port=8080 \
               --label traefik.docker.network=transit-public \
               --restart unless-stopped \
               ugcompsoc/apid:${{ inputs.tag_name }}
