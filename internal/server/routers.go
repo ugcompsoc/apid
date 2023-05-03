@@ -7,6 +7,8 @@ func (s *Server) v2Router(r *gin.RouterGroup) {
 	r.Use(s.ContextMiddleware())
 	r.Use(s.LoggingMiddleware())
 	r.GET("/", s.RootV2Get)
+	r.GET("/brew", s.MiscV1BrewGet)
+	r.GET("/ping", s.MiscV1PingGet)
 }
 
 func SetupRouter() *gin.Engine {
