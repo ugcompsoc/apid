@@ -31,7 +31,7 @@ jobs:
           key: ${{ secrets.SSH_SECRET }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            STRIPPED_TAG_NAME=$(echo "${{ inputs.tag_name }}" | sed 's#/#\-#g')
+            STRIPPED_TAG_NAME=$(echo "${{ inputs.tag_name }}" | sed -e 's#/#\-#g' -e 's#\.#\-#g')
             DOCKER_RESULTS=$(docker container ls -q --filter name=$STRIPPED_TAG_NAME)
             [ -z "$DOCKER_RESULTS" ] || docker rm $(docker container ls -q --filter name=$STRIPPED_TAG_NAME) --force
             docker image prune -a -f

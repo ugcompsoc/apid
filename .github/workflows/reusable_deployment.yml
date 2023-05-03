@@ -52,7 +52,7 @@ jobs:
           key: ${{ secrets.SSH_SECRET }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            STRIPPED_TAG_NAME=$(echo "${{ inputs.tag_name }}" | sed 's#/#\-#g')
+            STRIPPED_TAG_NAME=$(echo "${{ inputs.tag_name }}" | sed -e 's#/#\-#g' -e 's#\.#\-#g')
             docker run -d \
               --name compsoc_apid_$STRIPPED_TAG_NAME \
               --network=transit-public \
