@@ -28,7 +28,7 @@ Every change to source code should be covered by a unit test (negative and posit
 
 ### Code Coverage
 
-A code coverage percentage of 60% is to be upheld or commits and build will be rejected. If your code coverage is below this, just go write some unit tests; make them good, don't just make them for the craic.
+A code coverage percentage of 80% is to be upheld or commits and build will be rejected. If your code coverage is below this, just go write some unit tests; make them good, don't just make them for the craic.
 
 Currently the `cmd` package is ignored from code coverage.
 
