@@ -33,7 +33,7 @@ jobs:
     needs: [call-unit-tests, get-tag-name]
     uses: ./.github/workflows/reusable_remove_deployment.yml
     with:
-      tag_name: ${{ needs.get-tag-name.outputs.tag }}
+      tag_name: compsoc_apid_v2.
     secrets: inherit
   call-deployment:
     needs: [call-build-publish, get-tag-name]
