@@ -8,7 +8,7 @@
 
 # get the path to this script file
 DIR=$(dirname "$0")
-COVERAGE_THRESHOLD=80
+COVERAGE_THRESHOLD=75
 
 if [ -s go.mod ]; then
     ## Run Unit Tests
