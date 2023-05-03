@@ -36,4 +36,5 @@ jobs:
           else
             echo "Code coverage is below threshold. Please add more unit tests."
             echo "Failed"
+            exit 1
           fi
