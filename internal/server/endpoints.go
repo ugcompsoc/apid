@@ -24,6 +24,6 @@ func (s *Server) MiscV1BrewGet(c *gin.Context) {
 }
 
 func (s *Server) MiscV1PingGet(c *gin.Context) {
-	h.RespondWithString(c, "Pong!", 200)
+	h.RespondWithString(c, "Pong!", http.StatusOK)
 	return
 }

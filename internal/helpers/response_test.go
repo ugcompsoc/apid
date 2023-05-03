@@ -29,7 +29,7 @@ func TestRespondWithError(t *testing.T) {
 		assert.NoError(t, err, "could not create http request")
 		engine.ServeHTTP(w, req)
 
-		assert.Equal(t, http.StatusInternalServerError, w.Result().StatusCode, "expected status code 500 was not received")
+		assert.Equal(t, http.StatusInternalServerError, w.Code, "expected status code 500 was not received")
 		assert.Equal(t, "{\"error\":\"testing\"}", w.Body.String(), "expected error message not in response")
 	})
 
@@ -43,7 +43,7 @@ func TestRespondWithError(t *testing.T) {
 		assert.NoError(t, err, "could not create http request")
 		engine.ServeHTTP(w, req)
 
-		assert.Equal(t, http.StatusInternalServerError, w.Result().StatusCode, "expected status code 500 was not received")
+		assert.Equal(t, http.StatusInternalServerError, w.Code, "expected status code 500 was not received")
 		assert.Equal(t, "{\"error\":\"unknown error\"}", w.Body.String(), "expected error message not in response")
 	})
 
@@ -57,7 +57,7 @@ func TestRespondWithError(t *testing.T) {
 		assert.NoError(t, err, "could not create http request")
 		engine.ServeHTTP(w, req)
 
-		assert.Equal(t, http.StatusInternalServerError, w.Result().StatusCode, "expected status code 500 was not received")
+		assert.Equal(t, http.StatusInternalServerError, w.Code, "expected status code 500 was not received")
 		assert.NoError(t, err, "expected there to be no error marshalling response")
 		assert.Equal(t, "{\"error\":\"unknown error\"}", w.Body.String(), "expected error message not in response")
 	})
@@ -74,7 +74,7 @@ func TestRespondWithString(t *testing.T) {
 		assert.NoError(t, err, "could not create http request")
 		engine.ServeHTTP(w, req)
 
-		assert.Equal(t, http.StatusOK, w.Result().StatusCode, "expected status code 200 was not received")
+		assert.Equal(t, http.StatusOK, w.Code, "expected status code 200 was not received")
 		assert.Equal(t, "{\"message\":\"testing\"}", w.Body.String(), "expected error message not in response")
 	})
 }
