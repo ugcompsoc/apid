@@ -20,6 +20,22 @@ There are many [workflows](.github/workflows) in this repository that handle tes
 
 On every branch or tag event, unit and API tests are also ran.
 
+### Unit Testing
+
+The unit tests in this repo follow the safe standard that all Go projects should. Unit tests are kept next to their relating source files and are named the same as the source file with a preceeding `_test`.
+
+Every change to source code should be covered by a unit test (negative and positive tests)
+
+### Code Coverage
+
+A code coverage percentage of 60% is to be upheld or commits and build will be rejected. If your code coverage is below this, just go write some unit tests; make them good, don't just make them for the craic.
+
+Currently the `cmd` package is ignored from code coverage.
+
+### API Tests
+
+Each new route should have a coresponding Venom API test. These tests should ideally only cover happy paths. These tests belong in the `venom` folder.
+
 ### Repo Conventions
 
 #### Workflows
