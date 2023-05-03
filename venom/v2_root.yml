@@ -1,0 +1,36 @@
+name: V2 Base Route
+
+testcases:
+
+- name: GET V2 Root
+  steps:
+  - type: http
+    method: GET
+    url: "{{.url}}/v2"
+    timeout: 5
+    assertions:
+    - result.statuscode ShouldEqual 200
+    - result.bodyjson ShouldContainKey "message"
+    - result.bodyjson.message ShouldContain "Root V2"
+
+- name: GET V2 Brew
+  steps:
+  - type: http
+    method: GET
+    url: "{{.url}}/v2/brew"
+    timeout: 5
+    assertions:
+    - result.statuscode ShouldEqual 418
+    - result.bodyjson ShouldContainKey "error"
+    - result.bodyjson.error ShouldContain "I refuse to brew coffee because I am, permanently, a teapot."
+
+- name: GET V2 Ping
+  steps:
+  - type: http
+    method: GET
+    url: "{{.url}}/v2/ping"
+    timeout: 5
+    assertions:
+    - result.statuscode ShouldEqual 200
+    - result.bodyjson ShouldContainKey "message"
+    - result.bodyjson.message ShouldContain "Pong!"

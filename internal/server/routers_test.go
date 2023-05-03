@@ -40,6 +40,6 @@ func TestV2Router(t *testing.T) {
 		r := SetupRouter()
 		v2 := r.Group("v2")
 		s.v2Router(v2)
-		assert.Len(t, r.Routes(), 1, "v2 router should have added one route to the API")
+		assert.Len(t, r.Routes(), 3, "v2 router should have added 3 routes to the API")
 	})
 }

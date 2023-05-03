@@ -2,7 +2,6 @@ package server
 
 import (
 	"bytes"
-	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -20,10 +19,8 @@ func TestRootV2Get(t *testing.T) {
 		s := &Server{}
 		engine.GET("/v2", s.RootV2Get)
 		engine.ServeHTTP(w, req)
+
 		assert.Equal(t, http.StatusOK, ctx.Writer.Status(), "expected status 200 from endpoint")
-		expectedRespond := gin.H{"data": "Root V2"}
-		b, err := json.Marshal(&expectedRespond)
-		assert.NoError(t, err, "expected there to be no error marshalling response")
-		assert.Equal(t, string(b), w.Body.String(), "unexpected response")
+		assert.Equal(t, "{\"message\":\"Root V2\"}", w.Body.String(), "unexpected response")
 	})
 }
