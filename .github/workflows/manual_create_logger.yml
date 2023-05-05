@@ -1,0 +1,43 @@
+name: Create the API logger
+
+on: 
+  workflow_dispatch:
+    inputs:
+      logging_directory:
+        description: "Provide the directory where logs are found"
+        default: "/var/log/compsoc_apid"
+        type: string
+        required: true
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Remove old logger (if exists) and deploy new
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_SECRET }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            # Remove the logger is its running
+            DOCKER_RESULTS=$(docker container ls -q --filter name=compsoc_apid_logger)
+            [ -z "$DOCKER_RESULTS" ] || docker rm $(docker container ls -q --filter name=compsoc_apid_logger) --force
+
+            # Deploy the logger
+            cat ${{ inputs.logging_directory }} | docker run -d \
+              --name compsoc_apid_logger \
+              --network=transit-public \
+              --label traefik.http.routers.ugcompsoc_apid_logger.rule=Host\(\`logger.apid.testbox.compsoc.ie\`\) \
+              --label traefik.http.routers.ugcompsoc_apid_logger.entrypoints=websecure \
+              --label traefik.http.routers.ugcompsoc_apid_logger.tls=true \
+              --label traefik.http.routers.ugcompsoc_apid_logger.tls.certresolver=myresolver \
+              --label traefik.http.services.ugcompsoc_apid_logger.loadbalancer.server.port=7890 \
+              --label traefik.docker.network=transit-public \
+              --env LANG=uk \
+              --env TZ=America/New_York \
+              --restart unless-stopped \
+              allinurl/goaccess
+              -a -o html --log-format COMBINED --real-time-html - > report.html
