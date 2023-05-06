@@ -3,12 +3,12 @@ package config
 import (
 	"time"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 // Config describes the configuration for Server
 type Config struct {
-	LogLevel log.Level `mapstructure:"log_level"`
+	LogLevel string `mapstructure:"log_level"`
 	Timeouts struct {
 		Startup  time.Duration
 		Shutdown time.Duration
@@ -20,5 +20,28 @@ type Config struct {
 		CORS struct {
 			AllowedOrigins []string `mapstructure:"allowed_origins"`
 		}
+	}
+}
+
+func (c *Config) GetZeroLogLevel() zerolog.Level {
+	switch c.LogLevel {
+	case "trace":
+		return zerolog.TraceLevel
+	case "disabled":
+		return zerolog.Disabled
+	case "panic":
+		return zerolog.PanicLevel
+	case "fatal":
+		return zerolog.FatalLevel
+	case "error":
+		return zerolog.ErrorLevel
+	case "warn":
+		return zerolog.WarnLevel
+	case "info":
+		return zerolog.InfoLevel
+	case "debug":
+		return zerolog.DebugLevel
+	default:
+		return zerolog.NoLevel
 	}
 }

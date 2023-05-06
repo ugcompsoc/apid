@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/rs/cors"
-	"github.com/sirupsen/logrus"
 
 	"github.com/ugcompsoc/apid/internal/config"
 )
@@ -15,7 +14,6 @@ import (
 type Server struct {
 	Config config.Config
 	HTTP   *http.Server
-	Log    *logrus.Logger
 }
 
 // NewServer returns an initialized Server
