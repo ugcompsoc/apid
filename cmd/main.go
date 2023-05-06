@@ -6,14 +6,14 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"github.com/ugcompsoc/apid/internal/config"
@@ -24,7 +24,7 @@ var srv *server.Server
 
 func init() {
 	// Config defaults
-	viper.SetDefault("log_level", log.TraceLevel)
+	viper.SetDefault("log_level", zerolog.TraceLevel)
 
 	viper.SetDefault("timeouts.startup", 30*time.Second)
 	viper.SetDefault("timeouts.shutdown", 30*time.Second)
@@ -39,16 +39,19 @@ func init() {
 	viper.AddConfigPath(".")
 	viper.AddConfigPath("../")
 
+	// Set logger defaults
+	zerolog.SetGlobalLevel(zerolog.TraceLevel)
+
 	// Config from flags
 	pflag.StringP("log_level", "l", "info", "log level")
 	pflag.Parse()
 	if err := viper.BindPFlags(pflag.CommandLine); err != nil {
-		log.WithError(err).Fatal("Failed to bind pflags to config")
+		log.Err(err).Msg("failed to bind pflags to config")
 	}
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.WithField("err", err).Warn("Failed to read configuration")
+		log.Err(err).Msg("failed to read configuration")
 	}
 }
 
@@ -60,46 +63,54 @@ func reload() {
 
 	var cfg config.Config
 	if err := viper.Unmarshal(&cfg); err != nil {
-		log.WithField("err", err).Fatal("Failed to parse configuration")
+		log.Fatal().Err(err).Msg("failed to parse configuration")
 	}
 
-	log.SetLevel(cfg.LogLevel)
-	cJSON, err := json.Marshal(cfg)
-	if err != nil {
-		log.WithError(err).Fatal("Failed to encode config as JSON")
+	logLevel := cfg.GetZeroLogLevel()
+	if logLevel == zerolog.NoLevel {
+		log.Fatal().Msg("cannot start server without log level specified")
 	}
-	log.WithField("config", string(cJSON)).Debug("Got config")
+	zerolog.SetGlobalLevel(logLevel)
+
+	log.Trace().Any("config", cfg).Msg("got config")
 
 	srv = server.NewServer(cfg)
 
-	log.Info("Starting server")
+	log.Info().Msg("starting server")
 	go func() {
 		ctx, cancel := context.WithTimeout(context.Background(), cfg.Timeouts.Startup)
 		defer cancel()
 		if err := srv.Start(ctx); err != nil {
-			log.WithError(err).Fatal("Failed to start server")
+			log.Fatal().Err(err).Msg("Failed to start server")
 		}
 	}()
 }
 
 func stop() {
-	log.Info("Stopping server")
+	log.Info().Msg("stopping server")
 
 	ctx, cancel := context.WithTimeout(context.Background(), srv.Config.Timeouts.Shutdown)
 	defer cancel()
 	if err := srv.Stop(ctx); err != nil {
-		log.WithError(err).Fatal("Failed to stop server")
+		log.Fatal().Err(err).Msg("failed to stop server")
 	}
 
-	log.Info("Stopped server sucessfully")
+	log.Info().Msg("stopped server sucessfully")
 }
 
 func main() {
+	// Recover from panic
+	defer func() {
+		if err := recover(); err != nil {
+			log.Fatal().Any("error", err).Msg("server panic")
+		}
+	}()
+
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, os.Interrupt, syscall.SIGTERM)
 
 	viper.OnConfigChange(func(e fsnotify.Event) {
-		log.WithField("file", e.Name).Info("Config changed, reloading")
+		log.Trace().Str("file", e.Name).Msg("Config changed, reloading")
 		reload()
 	})
 	viper.WatchConfig()
