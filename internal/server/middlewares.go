@@ -16,9 +16,14 @@ import (
  */
 func (s *Server) ContextMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		val := ctx.Writer.Header().Get("context-id")
-		if len(val) == 0 {
+		// Set the context-id field if the user hasn't given us one (or its not valid)
+		_, err := uuid.Parse(ctx.Writer.Header().Get("context-id"))
+		if err != nil {
 			ctx.Writer.Header().Set("context-id", uuid.New().String())
+		}
+		// If this container is behind traefik we need to rely on the X-Real-Ip header to get the IP
+		if ctx.Request.Header.Get("X-Real-Ip") == "" {
+			ctx.Request.Header.Set("X-Real-Ip", ctx.RemoteIP())
 		}
 		ctx.Next()
 	}
@@ -30,7 +35,7 @@ func (s *Server) ContextMiddleware() gin.HandlerFunc {
 func (s *Server) LoggingMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		start := time.Now()
-		requestLog := log.With().Str("ip", ctx.RemoteIP()).Logger().
+		requestLog := log.With().Str("ip", ctx.Request.Header.Get("X-Real-Ip")).Logger().
 			With().Str("method", ctx.Request.Method).Logger().
 			With().Str("path", ctx.Request.URL.Path).Logger().
 			With().Str("context_id", ctx.Writer.Header().Get("context-id")).Logger()

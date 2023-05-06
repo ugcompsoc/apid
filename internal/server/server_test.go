@@ -19,7 +19,7 @@ func TestStop(t *testing.T) {
 			},
 		}
 		go func() {
-			time.Sleep(1 * time.Second)
+			time.Sleep(10 * time.Millisecond)
 			err := s.Stop(context.Background())
 			assert.NoError(t, err, "could not stop server")
 			l, err := net.Listen("tcp", ":8081")
@@ -41,7 +41,7 @@ func TestStart(t *testing.T) {
 			},
 		}
 		go func() {
-			time.Sleep(1 * time.Second)
+			time.Sleep(10 * time.Millisecond)
 			l, err := net.Listen("tcp", ":8082")
 			assert.Error(t, err, "expected server to be running on port")
 			if err == nil {
