@@ -21,6 +21,13 @@ type Config struct {
 			AllowedOrigins []string `mapstructure:"allowed_origins"`
 		}
 	}
+
+	Database struct {
+		Host     string `mapstructure:"host"`
+		Name     string `mapstructure:"name"`
+		Username string `mapstructure:"username"`
+		Password string `mapstructure:"password"`
+	}
 }
 
 func (c *Config) GetZeroLogLevel() zerolog.Level {

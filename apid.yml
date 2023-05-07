@@ -1,8 +1,0 @@
-log_level: 'trace'
-timeouts:
-  startup: 30s
-  shutdown: 30s
-http:
-  listen_address: ':8080'
-  cors:
-    allowed_origins: ['*']
