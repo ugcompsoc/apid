@@ -37,18 +37,10 @@ on:
 
 jobs:
   get-url:
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
-    outputs:
-      url: ${{ steps.url.outputs.url }}
-    steps:
-      - name: Get API URL
-        id: url
-        shell: bash
-        run: |
-          echo "##[set-output name=url;]$(echo ${{ inputs.tag_name}}.dev.apid.testbox.compsoc.ie)" || true
-          [ ${{ inputs.environment }} = "TEST" ] && echo "##[set-output name=url;]$(echo dev.apid.testbox.compsoc.ie)" || true
-          [ ${{ inputs.environment }} = "PROD" ] && echo "##[set-output name=url;]$(echo apid.testbox.compsoc.ie)" || true
+    uses: ./.github/workflows/reusable_get_url.yml
+    with:
+      tag_name: ${{ inputs.tag_name }}
+      environment: ${{ inputs.environment }}
   deployment:
     needs: [get-url]
     runs-on: ubuntu-latest
