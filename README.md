@@ -30,7 +30,9 @@ Every change to source code should be covered by a unit test (negative and posit
 
 A code coverage percentage of 50% is to be upheld or commits and build will be rejected. If your code coverage is below this, just go write some unit tests; make them good, don't just make them for the craic.
 
-Currently the `cmd` package is ignored from code coverage.
+Currently the `cmd` package is ignored from code coverage (TODO [#21](https://github.com/ugcompsoc/apid/issues/21)).
+
+The `internal/services/database_test_utils` package is permanetly ignored from code coverage as currently do not see a benefit to testing test utils.
 
 ### API Tests
 
