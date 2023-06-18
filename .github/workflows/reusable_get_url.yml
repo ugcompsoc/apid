@@ -27,7 +27,10 @@ jobs:
         shell: bash
         run: |
           TAG_NAME=${{ inputs.tag_name }}
-          TAG_NAME=$(echo "$TAG_NAME" | sed -r 's/[._/]+/-/g' | sed 's/-$//')
-          echo "##[set-output name=url;]$(echo ${TAG_NAME:0:32}.dev.apid.testbox.compsoc.ie)" || true
-          [ ${{ inputs.environment }} = "TEST" ] && echo "##[set-output name=url;]$(echo dev.apid.testbox.compsoc.ie)" || true
-          [ ${{ inputs.environment }} = "PROD" ] && echo "##[set-output name=url;]$(echo apid.testbox.compsoc.ie)" || true
+          TAG_NAME=$(echo "${TAG_NAME:0:32}" | sed -r 's/[._/]+/-/g' | sed 's/-$//')
+          echo "tag name: ${TAG_NAME}"
+          URL=$(echo ${TAG_NAME}.dev.apid.testbox.compsoc.ie)
+          [ ${{ inputs.environment }} = "TEST" ] && URL=$(echo dev.apid.testbox.compsoc.ie)
+          [ ${{ inputs.environment }} = "PROD" ] && URL=$(echo apid.testbox.compsoc.ie)
+          echo "url: ${URL}"
+          echo "##[set-output name=url;]$(echo $URL)" || true
