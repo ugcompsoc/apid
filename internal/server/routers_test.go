@@ -7,39 +7,21 @@ import (
 )
 
 func TestSetupRouter(t *testing.T) {
-	t.Run("should include two middlewares", func(t *testing.T) {
+	t.Run("check setup router", func(t *testing.T) {
 		r := SetupRouter()
 		assert.Len(t, r.Handlers, 2, "should include 2 middlewares from engine")
-	})
-
-	t.Run("base path should be /", func(t *testing.T) {
-		r := SetupRouter()
 		assert.Equal(t, r.BasePath(), "/", "base path should be /")
 	})
 }
 
 func TestV2Router(t *testing.T) {
-	t.Run("should include four middlewares", func(t *testing.T) {
+	t.Run("check V2 router defaults", func(t *testing.T) {
 		s := &Server{}
 		r := SetupRouter()
 		v2 := r.Group("v2")
-		s.v2Router(v2)
-		assert.Len(t, v2.Handlers, 4, "should include 2 middlewares from engine, 2 from router")
-	})
-
-	t.Run("base path should be v2", func(t *testing.T) {
-		s := &Server{}
-		r := SetupRouter()
-		v2 := r.Group("v2")
-		s.v2Router(v2)
+		assert.Len(t, v2.Handlers, 2, "should include 2 from router")
 		assert.Equal(t, v2.BasePath(), "/v2", "base path should be v2")
-	})
-
-	t.Run("should include one route", func(t *testing.T) {
-		s := &Server{}
-		r := SetupRouter()
-		v2 := r.Group("v2")
 		s.v2Router(v2)
-		assert.Len(t, r.Routes(), 3, "v2 router should have added 3 routes to the API")
+		assert.Len(t, r.Routes(), 4, "v2 router should have added 4 routes to the API")
 	})
 }

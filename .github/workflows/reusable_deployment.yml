@@ -25,6 +25,15 @@ on:
       SSH_PORT:
         description: "Provide the SSH port"
         required: true
+      MONGO_DATABASE_NAME:
+        description: "Provide the FQDN (inclusive of protocol definition) for the DB"
+        required: true
+      MONGO_ROOT_USERNAME:
+        description: "Provide the username that has read/write access to db"
+        required: true
+      MONGO_ROOT_PASSWORD:
+        description: "Provide the password for that user"
+        required: true
 
 jobs:
   get-url:
@@ -53,14 +62,75 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             STRIPPED_TAG_NAME=$(echo "${{ inputs.tag_name }}" | sed -e 's#/#\-#g' -e 's#\.#\-#g')
-            docker run -d \
-              --name compsoc_apid_$STRIPPED_TAG_NAME \
-              --network=transit-public \
-              --label traefik.http.routers.ugcompsoc_apid_$STRIPPED_TAG_NAME.rule=Host\(\`${{ needs.get-url.outputs.url }}\`\) \
-              --label traefik.http.routers.ugcompsoc_apid_$STRIPPED_TAG_NAME.entrypoints=websecure \
-              --label traefik.http.routers.ugcompsoc_apid_$STRIPPED_TAG_NAME.tls=true \
-              --label traefik.http.routers.ugcompsoc_apid_$STRIPPED_TAG_NAME.tls.certresolver=myresolver \
-              --label traefik.http.services.ugcompsoc_apid_$STRIPPED_TAG_NAME.loadbalancer.server.port=8080 \
-              --label traefik.docker.network=transit-public \
-              --restart unless-stopped \
-              ugcompsoc/apid:${{ inputs.tag_name }}
+
+            docker network create private-ugcompsoc_apid_${STRIPPED_TAG_NAME}
+
+            mkdir /opt/ugcompsoc_apid/${STRIPPED_TAG_NAME}
+            cd /opt/ugcompsoc_apid/${STRIPPED_TAG_NAME}
+
+            HOST=\`
+            HOST=${HOST}${{ needs.get-url.outputs.url }}
+            HOST=${HOST}\`
+
+            tee docker-compose.yml << END
+            version: '3'
+            services: 
+              ugcompsoc_apid_${STRIPPED_TAG_NAME}:
+                image: ugcompsoc/apid:${{ inputs.tag_name }}
+                container_name: ugcompsoc_apid_${STRIPPED_TAG_NAME}
+                labels:
+                  - "traefik.default.protocol=http"
+                  - "traefik.docker.network=transit-public"
+                  - "traefik.enable=true"
+                  - "traefik.http.routers.ugcompsoc_apid_${STRIPPED_TAG_NAME}.rule=Host(${HOST})"
+                  - "traefik.http.routers.ugcompsoc_apid_${STRIPPED_TAG_NAME}.entrypoints=websecure"
+                  - "traefik.http.routers.ugcompsoc_apid_${STRIPPED_TAG_NAME}.tls=true"
+                  - "traefik.http.routers.ugcompsoc_apid_${STRIPPED_TAG_NAME}.tls.certresolver=myresolver"
+                  - "traefik.http.services.ugcompsoc_apid_${STRIPPED_TAG_NAME}.loadbalancer.server.port=8080"
+                  - "traefik.port=80"
+                depends_on:
+                  - "ugcompsoc_apid_${STRIPPED_TAG_NAME}_db"
+                restart: unless-stopped
+                volumes:
+                  - ./apid.yml:/run/config/apid.yml:ro
+                networks:
+                  - transit-public
+                  - private-ugcompsoc_apid_${STRIPPED_TAG_NAME}
+              ugcompsoc_apid_${STRIPPED_TAG_NAME}_db:
+                image: mongo:6-jammy
+                container_name: ugcompsoc_apid_${STRIPPED_TAG_NAME}_db
+                hostname: ugcompsoc_apid_${STRIPPED_TAG_NAME}_db
+                environment:
+                  MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_ROOT_USERNAME }}
+                  MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
+                  MONGO_INITDB_DATABASE: ${{ secrets.MONGO_DATABASE_NAME }}
+                restart: unless-stopped
+                volumes:
+                  - ./db_data:/data/db
+                networks:
+                  - private-ugcompsoc_apid_${STRIPPED_TAG_NAME}
+
+            networks:
+              transit-public:
+                external: true
+              private-ugcompsoc_apid_${STRIPPED_TAG_NAME}:
+                external: false
+            END
+
+            tee apid.yml << END
+            log_level: 'trace'
+            timeouts:
+              startup: 30s
+              shutdown: 30s
+            http:
+              listen_address: ':8080'
+              cors:
+                allowed_origins: ['*']
+            database:
+              host: "mongodb://ugcompsoc_apid_${STRIPPED_TAG_NAME}_db"
+              name: "${{ secrets.MONGO_DATABASE_NAME }}"
+              username: "${{ secrets.MONGO_ROOT_USERNAME }}"
+              password: "${{ secrets.MONGO_ROOT_PASSWORD }}"
+            END
+
+            docker compose up -d
