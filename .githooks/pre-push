@@ -8,7 +8,7 @@
 
 # get the path to this script file
 DIR=$(dirname "$0")
-COVERAGE_THRESHOLD=80
+COVERAGE_THRESHOLD=50
 
 if [ -s go.mod ]; then
     ## Run Unit Tests
@@ -27,5 +27,6 @@ if [ -s go.mod ]; then
     else
         echo "Code coverage is below threshold. Please add more unit tests."
         echo "Failed"
+        exit 1
     fi
 fi

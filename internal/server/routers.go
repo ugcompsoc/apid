@@ -6,9 +6,11 @@ import "github.com/gin-gonic/gin"
 func (s *Server) v2Router(r *gin.RouterGroup) {
 	r.Use(s.ContextMiddleware())
 	r.Use(s.LoggingMiddleware())
+
 	r.GET("/", s.RootV2Get)
-	r.GET("/brew", s.MiscV1BrewGet)
-	r.GET("/ping", s.MiscV1PingGet)
+	r.GET("/healthcheck", s.MiscV2HealthcheckGet)
+	r.GET("/brew", s.MiscV2BrewGet)
+	r.GET("/ping", s.MiscV2PingGet)
 }
 
 func SetupRouter() *gin.Engine {

@@ -23,10 +23,11 @@ type Config struct {
 	}
 
 	Database struct {
-		Host     string `mapstructure:"host"`
-		Name     string `mapstructure:"name"`
-		Username string `mapstructure:"username"`
-		Password string `mapstructure:"password"`
+		Host             string `mapstructure:"host"`
+		Name             string `mapstructure:"name"`
+		Username         string `mapstructure:"username"`
+		Password         string `mapstructure:"password"`
+		EventsCollection string `mapstructure:"events_collection"`
 	}
 }
 

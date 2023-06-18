@@ -34,3 +34,14 @@ testcases:
     - result.statuscode ShouldEqual 200
     - result.bodyjson ShouldContainKey "message"
     - result.bodyjson.message ShouldContain "Pong!"
+
+- name: GET V2 Healthcheck
+  steps:
+  - type: http
+    method: GET
+    url: "{{.url}}/v2/healthcheck"
+    timeout: 5
+    assertions:
+    - result.statuscode ShouldEqual 200
+    - result.bodyjson ShouldContainKey "errors"
+    - result.bodyjson.errors ShouldBeEmpty

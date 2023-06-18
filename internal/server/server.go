@@ -7,13 +7,16 @@ import (
 	"net/http"
 
 	"github.com/rs/cors"
+	"github.com/rs/zerolog/log"
 
 	"github.com/ugcompsoc/apid/internal/config"
+	"github.com/ugcompsoc/apid/internal/services/database"
 )
 
 type Server struct {
-	Config config.Config
-	HTTP   *http.Server
+	Config    config.Config
+	HTTP      *http.Server
+	Datastore *database.Datastore
 }
 
 // NewServer returns an initialized Server
@@ -41,6 +44,12 @@ func NewServer(config config.Config) *Server {
 	s := &Server{
 		Config: config,
 		HTTP:   httpSrv,
+	}
+
+	var err error
+	s.Datastore, err = database.NewDatastore(&s.Config)
+	if err != nil {
+		log.Fatal().Err(err).Msg("database")
 	}
 
 	// v2 route

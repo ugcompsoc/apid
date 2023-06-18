@@ -7,7 +7,7 @@ http:
   cors:
     allowed_origins: ['*']
 database:
-  host: 'mongodb+srv://URL'
+  host: 'mongodb+srv://db-url.mongodb.net'
   name: 'DATABASE-NAME'
   username: 'DATABASE-USERNAME'
   password: 'DATABASE-PASSWORD'
