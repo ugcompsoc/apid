@@ -9,6 +9,8 @@ on:
 jobs:
   call-unit-tests:
     uses: ./.github/workflows/reusable_unit_tests.yml
+  call-verify-swagger:
+    uses: ./.github/workflows/reusable_verify_swagger.yml
   get-version:
     runs-on: ubuntu-latest
     timeout-minutes: 1
