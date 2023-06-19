@@ -1,0 +1,34 @@
+name: Run Unit Tests
+
+on:
+  workflow_call:
+
+jobs:
+  verify-swagger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          # Fetch all commits
+          fetch-depth: 0
+      
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.19.x'
+      
+      - name: Install dependencies
+        run: |
+          go get . || true
+          go install github.com/swaggo/swag/cmd/swag@v1.16.1
+      
+      - name: Verify Swagger CLI was ran if changes were made
+        run: |
+          cp -R docs docs_branch
+          swag init --dir "cmd,internal/server,internal/helpers"
+          cmp --silent docs/docs.go docs_branch/docs.go || $(echo "Swagger CLI was not ran" && exit 1)
+          cmp --silent docs/swagger.json docs_branch/swagger.json || $(echo "Swagger CLI was not ran" && exit 1)
+          cmp --silent docs/swagger.yaml docs_branch/swagger.yaml || $(echo "Swagger CLI was not ran" && exit 1)
+          echo "Swagger CLI was ran or no changes have been made to the docs"
