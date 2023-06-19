@@ -1,12 +1,11 @@
 package server
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 // Returns the routes associated with /v2
 func (s *Server) v2Router(r *gin.RouterGroup) {
-	r.Use(s.ContextMiddleware())
-	r.Use(s.LoggingMiddleware())
-
 	r.GET("/", s.RootV2Get)
 	r.GET("/healthcheck", s.MiscV2HealthcheckGet)
 	r.GET("/brew", s.MiscV2BrewGet)
@@ -17,6 +16,8 @@ func SetupRouter() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	r.Use(gin.CustomRecovery(RecoveryMiddlware))
+	r.Use(ContextMiddleware())
+	r.Use(LoggingMiddleware())
 	r.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Content-Type", "application/json")
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")

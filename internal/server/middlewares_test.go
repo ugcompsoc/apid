@@ -25,8 +25,7 @@ func TestContextMiddleware(t *testing.T) {
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, "/", nil)
 		assert.NoError(t, err, "could not create http request")
 
-		s := &Server{}
-		engine.Use(s.ContextMiddleware())
+		engine.Use(ContextMiddleware())
 		engine.ServeHTTP(w, req)
 		contextId := ctx.Writer.Header().Get("context-id")
 		_, err = uuid.Parse(contextId)
@@ -39,10 +38,9 @@ func TestContextMiddleware(t *testing.T) {
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, "/", nil)
 		assert.NoError(t, err, "could not create http request")
 
-		s := &Server{}
 		expectedContextId := uuid.New().String()
 		ctx.Writer.Header().Set("context-id", expectedContextId)
-		engine.Use(s.ContextMiddleware())
+		engine.Use(ContextMiddleware())
 		engine.ServeHTTP(w, req)
 		contextId := ctx.Writer.Header().Get("context-id")
 		actualContextId, err := uuid.Parse(contextId)
@@ -56,9 +54,8 @@ func TestContextMiddleware(t *testing.T) {
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, "/", nil)
 		assert.NoError(t, err, "could not create http request")
 
-		s := &Server{}
 		ctx.Writer.Header().Set("context-id", "i am an invalid uuid")
-		engine.Use(s.ContextMiddleware())
+		engine.Use(ContextMiddleware())
 		engine.ServeHTTP(w, req)
 		contextId := ctx.Writer.Header().Get("context-id")
 		_, err = uuid.Parse(contextId)
@@ -77,9 +74,8 @@ func TestLoggingMiddleware(t *testing.T) {
 		writer := io.Writer(&buf)
 		log.Logger = log.Output(writer)
 
-		s := &Server{}
-		engine.Use(s.ContextMiddleware())
-		engine.Use(s.LoggingMiddleware())
+		engine.Use(ContextMiddleware())
+		engine.Use(LoggingMiddleware())
 		req.RemoteAddr = "127.0.0.1:80"
 
 		engine.ServeHTTP(w, req)
@@ -103,9 +99,8 @@ func TestLoggingMiddleware(t *testing.T) {
 		writer := io.Writer(&buf)
 		log.Logger = log.Output(writer)
 
-		s := &Server{}
-		engine.Use(s.ContextMiddleware())
-		engine.Use(s.LoggingMiddleware())
+		engine.Use(ContextMiddleware())
+		engine.Use(LoggingMiddleware())
 		req.RemoteAddr = "127.0.0.2:80"
 		req.Header.Set("X-Real-Ip", "127.0.0.1")
 

@@ -1,0 +1,14 @@
+name: Base Route
+
+testcases:
+
+- name: GET Root
+  steps:
+  - type: http
+    method: GET
+    url: "{{.url}}"
+    no_follow_redirect: true
+    timeout: 5
+    assertions:
+    - result.statuscode ShouldEqual 307
+    - result.headers.location ShouldEqual /docs/index.html

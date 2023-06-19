@@ -8,6 +8,8 @@ import (
 
 	"github.com/rs/cors"
 	"github.com/rs/zerolog/log"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/ugcompsoc/apid/internal/config"
 	"github.com/ugcompsoc/apid/internal/services/database"
@@ -52,9 +54,15 @@ func NewServer(config config.Config) *Server {
 		log.Fatal().Err(err).Msg("database")
 	}
 
+	// root route
+	r.GET("", s.RootGet)
+
 	// v2 route
 	v2 := r.Group("v2")
 	s.v2Router(v2)
+
+	// docs route
+	r.GET("docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return s
 }

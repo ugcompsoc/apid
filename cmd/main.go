@@ -16,6 +16,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
+	_ "github.com/ugcompsoc/apid/docs"
 	"github.com/ugcompsoc/apid/internal/config"
 	"github.com/ugcompsoc/apid/internal/server"
 )
@@ -98,6 +99,16 @@ func stop() {
 	log.Info().Msg("stopped server sucessfully")
 }
 
+// @title           UG CompSoc APId
+// @version         1.0
+// @description     Webservices APIv2 for account and IAAS management.
+// @termsOfService  https://compsoc.ie/terms
+// @contact.name   	UG CompSoc Admin Team
+// @contact.url    	https://compsoc.ie/support
+// @contact.email  	compsoc@socs.nuigalway.ie
+// @license.name  	MIT
+// @license.url   	https://github.com/ugcompsoc/apid/blob/main/LICENSE
+// @BasePath  		/
 func main() {
 	// Recover from panic
 	defer func() {

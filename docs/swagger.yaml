@@ -1,0 +1,107 @@
+basePath: /
+definitions:
+  helpers.Error:
+    properties:
+      error:
+        example: a server error was encountered
+        type: string
+    type: object
+  helpers.ErrorsArray:
+    properties:
+      errors:
+        example:
+        - cannot ping database
+        - scheduler offline
+        items:
+          type: string
+        type: array
+    type: object
+  helpers.Message:
+    properties:
+      message:
+        example: i just wanted to say hi
+        type: string
+    type: object
+info:
+  contact:
+    email: compsoc@socs.nuigalway.ie
+    name: UG CompSoc Admin Team
+    url: https://compsoc.ie/support
+  description: Webservices APIv2 for account and IAAS management.
+  license:
+    name: MIT
+    url: https://github.com/ugcompsoc/apid/blob/main/LICENSE
+  termsOfService: https://compsoc.ie/terms
+  title: UG CompSoc APId
+  version: "1.0"
+paths:
+  /:
+    get:
+      description: Redirect to swagger docs
+      responses:
+        "307":
+          description: Temporary Redirect
+          headers:
+            Location:
+              description: docs/index.html
+              type: string
+      summary: Redirect to swagger docs
+      tags:
+      - Root
+  /v2:
+    get:
+      description: Responds with 'Root V2' message
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Message'
+      summary: Get health of API
+      tags:
+      - V2
+  /v2/brew:
+    get:
+      description: Responds with refusal to brew coffee
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Error'
+      summary: Brew coffee
+      tags:
+      - V2
+  /v2/healthcheck:
+    get:
+      description: Responds with any service errors
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.ErrorsArray'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Error'
+      summary: Get health of API
+      tags:
+      - V2
+  /v2/ping:
+    get:
+      description: Responds with a pong
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Message'
+      summary: Ping pong
+      tags:
+      - V2
+swagger: "2.0"

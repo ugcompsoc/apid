@@ -80,6 +80,21 @@ func TestMain(m *testing.M) {
 	os.Exit(exitCode)
 }
 
+func TestRootGet(t *testing.T) {
+	t.Run("happy path", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		ctx, engine := gin.CreateTestContext(w)
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, "/", new(bytes.Buffer))
+		assert.NoError(t, err, "could not create http request")
+		s := &Server{}
+		engine.GET("/", s.RootGet)
+		engine.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusTemporaryRedirect, w.Code, "expected status 307 from endpoint")
+		assert.Equal(t, "/docs/index.html", w.HeaderMap.Get("Location"), "unexcepted or missing redirect")
+	})
+}
+
 func TestRootV2Get(t *testing.T) {
 	t.Run("happy path", func(t *testing.T) {
 		w := httptest.NewRecorder()
