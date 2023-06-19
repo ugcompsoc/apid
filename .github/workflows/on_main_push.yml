@@ -32,7 +32,7 @@ jobs:
           minor_pattern: "feat:"
           format: "v${major}.${minor}.${patch}-prerelease${increment}"
   call-build-publish:
-    needs: [call-unit-tests, get-version]
+    needs: [call-unit-tests, get-version, call-verify-swagger]
     uses: ./.github/workflows/reusable_build_publish.yml
     with:
       image_names: |
@@ -41,7 +41,7 @@ jobs:
         ugcompsoc/apid:latest
     secrets: inherit
   call-remove:
-    needs: [call-unit-tests]
+    needs: [call-unit-tests, call-verify-swagger]
     uses: ./.github/workflows/reusable_remove_deployment.yml
     with:
       tag_name: prerelease

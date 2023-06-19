@@ -23,7 +23,7 @@ jobs:
           GITHUB_REF=${{ github.event.ref }}
           echo ::set-output name=tag::${GITHUB_REF/refs\/tags\//} || true
   call-build-publish:
-    needs: [call-unit-tests, get-tag-name]
+    needs: [call-unit-tests, get-tag-name, call-verify-swagger]
     uses: ./.github/workflows/reusable_build_publish.yml
     with:
       image_names: |
@@ -32,7 +32,7 @@ jobs:
         ugcompsoc/apid:latest
     secrets: inherit
   call-remove:
-    needs: [call-unit-tests, get-tag-name]
+    needs: [call-unit-tests, get-tag-name, call-verify-swagger]
     uses: ./.github/workflows/reusable_remove_deployment.yml
     with:
       tag_name: compsoc_apid_v2.
