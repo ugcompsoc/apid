@@ -38,6 +38,12 @@ The `internal/services/database_test_utils` package is permanetly ignored from c
 
 Each new route should have a coresponding Venom API test. These tests should ideally only cover happy paths. These tests belong in the `venom` folder.
 
+### Swagger
+
+Swagger is responsible for collating all the route documentation and displaying it at `docs/index.html`. Every time there is a change to documentation of a route you should run `swag init --dir "cmd,internal/server,internal/helpers"`, this will update the relevant files so it will display the correct information. It is important that you run this command after you merge any changes into your branch that changed the route documentation.
+
+Automate this via a workflow job (TODO [#37](https://github.com/ugcompsoc/apid/issues/37))
+
 ### Repo Conventions
 
 #### Workflows

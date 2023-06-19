@@ -1,0 +1,13 @@
+name: Docs Route
+
+testcases:
+
+- name: GET Swagger Docs
+  steps:
+  - type: http
+    method: GET
+    url: "{{.url}}/docs/index.html"
+    timeout: 5
+    assertions:
+    - result.statuscode ShouldEqual 200
+    - result.body ShouldContainSubstring swagger

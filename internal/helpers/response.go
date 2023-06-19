@@ -10,7 +10,7 @@ func RespondWithError(c *gin.Context, err error, statusCode int) {
 	if err == nil || len(err.Error()) == 0 {
 		err = errors.New("unknown error")
 	}
-	c.JSON(statusCode, gin.H{"error": err.Error()})
+	c.JSON(statusCode, Error{Error: err.Error()})
 }
 
 func RespondWithString(c *gin.Context, message string, statusCode int) {

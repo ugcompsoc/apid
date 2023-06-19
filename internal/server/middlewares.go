@@ -14,7 +14,7 @@ import (
 /*
  * This middlware adds a context ID to the request so we can track all requests from this user through the logs
  */
-func (s *Server) ContextMiddleware() gin.HandlerFunc {
+func ContextMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// Set the context-id field if the user hasn't given us one (or its not valid)
 		_, err := uuid.Parse(ctx.Writer.Header().Get("context-id"))
@@ -32,7 +32,7 @@ func (s *Server) ContextMiddleware() gin.HandlerFunc {
 /*
  * This middleware logs primarily the request path, method, response status and completion latency
  */
-func (s *Server) LoggingMiddleware() gin.HandlerFunc {
+func LoggingMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		start := time.Now()
 		requestLog := log.With().Str("ip", ctx.Request.Header.Get("X-Real-Ip")).Logger().
