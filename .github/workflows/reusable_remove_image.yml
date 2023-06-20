@@ -23,10 +23,17 @@ jobs:
         shell: bash
         run: |
           REPO="ugcompsoc/apid"
+
           echo "> Requesting token from https://hub.docker.com/v2/users/login/"
           TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'${{ secrets.DOCKER_REGISTRY_USERNAME }}'", "password": "'${{ secrets.DOCKER_REGISTRY_PASSWORD }}'"}' https://hub.docker.com/v2/users/login/ | grep -Po '"token":"*\K[^"]*')
-          echo "> Requesting deletion of ${{ inputs.tag_name }} from $REPO -> https://hub.docker.com/v2/repositories/${REPO}/tags/${{ inputs.tag_name }}/"
-          curl -i -X DELETE \
-            -H "Accept: application/json" \
-            -H "Authorization: Bearer $TOKEN" \
-            "https://hub.docker.com/v2/repositories/${REPO}/tags/${{ inputs.tag_name }}/"
+
+          echo "> Get all images that contain ${{ inputs.tag_name }}"
+          curl "https://hub.docker.com/v2/namespaces/ugcompsoc/repositories/apid/tags?page_size=100" | grep -o '"name": *"[^"]*' | grep -o '[^"]*$' | sed '/-prerelease/!d' >> tags.txt
+          cat tags.txt | while read line 
+          do
+            echo "> Requesting deletion of ${line} from $REPO -> https://hub.docker.com/v2/repositories/${REPO}/tags/${line}/"
+            curl -i -X DELETE \
+              -H "Accept: application/json" \
+              -H "Authorization: Bearer $TOKEN" \
+              "https://hub.docker.com/v2/repositories/${REPO}/tags/${line}/"
+          done

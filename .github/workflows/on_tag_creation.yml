@@ -22,6 +22,12 @@ jobs:
         run: |
           GITHUB_REF=${{ github.event.ref }}
           echo ::set-output name=tag::${GITHUB_REF/refs\/tags\//} || true
+  call-remove-image:
+    needs: [call-unit-tests, get-tag-name, call-verify-swagger]
+    uses: ./.github/workflows/reusable_remove_image.yml
+    with:
+      tag_name: -prerelease
+    secrets: inherit
   call-build-publish:
     needs: [call-unit-tests, get-tag-name, call-verify-swagger]
     uses: ./.github/workflows/reusable_build_publish.yml
