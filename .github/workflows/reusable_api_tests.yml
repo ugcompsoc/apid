@@ -12,6 +12,10 @@ on:
         description: "Provide the environment you would like the image to be deployed on, e.g. DEV, TEST or PROD"
         required: true
         default: DEV
+      test_regex:
+        type: string
+        description: "Provide the regex to match tests to"
+        default: venom/*.yml
 
 jobs:
   get-url:
@@ -35,4 +39,4 @@ jobs:
           curl https://github.com/ovh/venom/releases/download/v1.1.0/venom.linux-amd64 -L -o /usr/local/bin/venom
           chmod +x /usr/local/bin/venom
           echo "url: 'https://${{ needs.get-url.outputs.url }}'" > venom_vars_tmp.yml
-          venom run venom/*.yml --var-from-file venom_vars_tmp.yml --output-dir test_results
+          venom run ${{ inputs.test_regex }} --var-from-file venom_vars_tmp.yml --output-dir test_results
