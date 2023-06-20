@@ -44,3 +44,10 @@ jobs:
       tag_name: ${{ needs.get-tag-name.outputs.tag }}
       environment: PROD
     secrets: inherit
+  call-api-tests:
+    needs: [call-deployment, get-tag-name]
+    uses: ./.github/workflows/reusable_api_tests.yml
+    with:
+      tag_name: ${{ needs.get-tag-name.outputs.tag }}
+      environment: PROD
+      test_regex: venom/v2_root.yml
