@@ -47,7 +47,7 @@ jobs:
       tag_name: prerelease
     secrets: inherit
   call-deployment:
-    needs: [call-build-publish, get-version]
+    needs: [call-build-publish, get-version, call-remove]
     uses: ./.github/workflows/reusable_deployment.yml
     with:
       tag_name: ${{ needs.get-version.outputs.version }}
