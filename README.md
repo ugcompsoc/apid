@@ -11,6 +11,12 @@ I don't know. While you're here though, check out this [cool video](https://www.
 
 ## Contributing
 
+### Running the code
+
+A handy docker compose file has been created that contains all of the dependencies needed to run this API. Run this in your terminal to start the API on port 8080 as well as any dependencies needed to run the service (A.K.A. MongoDB)
+
+  docker compose -f docker-compose-local.yml up
+
 ### Workflows
 
 There are many [workflows](.github/workflows) in this repository that handle testing the code, building the docker image, deploying the docker image to the respective environments, and handling deleting old deployments. These workflows are ran at various points of the software development cycle, the mains ones to mention are:
