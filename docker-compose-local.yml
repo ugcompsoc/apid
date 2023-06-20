@@ -1,0 +1,41 @@
+version: '3'
+services: 
+  ugcompsoc_apid_local:
+    image: golang:1.19-bullseye
+    container_name: ugcompsoc_apid_local
+    depends_on:
+      - "ugcompsoc_apid_local_db"
+    restart: unless-stopped
+    volumes:
+      - ./:/opt/ugcompsoc_apid_local
+      - ./apid.yml:/run/config/apid.yml
+    networks:
+      - private-ugcompsoc_apid_local
+    ports:
+      - "8080:8080"
+    working_dir: /opt/ugcompsoc_apid_local
+    environment:
+      CGO_ENABLED: 1
+    command: sh -c "go install github.com/cortesi/modd/cmd/modd@latest && modd"
+      
+  ugcompsoc_apid_local_db:
+    image: mongo:6-jammy
+    container_name: ugcompsoc_apid_local_db
+    hostname: ugcompsoc_apid_local_db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root_username
+      MONGO_INITDB_ROOT_PASSWORD: root_password
+      MONGO_INITDB_DATABASE: apid
+    restart: unless-stopped
+    volumes:
+      - ugcompsoc_apid_local_db_data:/data/db
+    networks:
+      - private-ugcompsoc_apid_local
+
+networks:
+  private-ugcompsoc_apid_local:
+    external: false
+
+volumes:
+  ugcompsoc_apid_local_db_data:
+    external: false
