@@ -139,7 +139,7 @@ func TestMiscV2HealthcheckGet(t *testing.T) {
 		engine.GET("/v2/healthcheck", s.MiscV2HealthcheckGet)
 		engine.ServeHTTP(w, req)
 
-		assert.Equal(t, http.StatusOK, w.Code, "expected status 200 from endpoint")
+		assert.Equal(t, http.StatusInternalServerError, w.Code, "expected status 500 from endpoint")
 		assert.Equal(t, "{\"errors\":[\"cannot ping database\"]}", w.Body.String(), "expected empty errors array")
 	})
 }

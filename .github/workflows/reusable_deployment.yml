@@ -88,6 +88,11 @@ jobs:
                 networks:
                   - transit-public
                   - private-ugcompsoc_apid_${STRIPPED_TAG_NAME}
+                healthcheck:
+                  test: curl http://localhost:8080/v2/healthcheck -s --fail -o /dev/null
+                  interval: 3s
+                  timeout: 3s
+                  retries: 10
               ugcompsoc_apid_${STRIPPED_TAG_NAME}_db:
                 image: mongo:6-jammy
                 container_name: ugcompsoc_apid_${STRIPPED_TAG_NAME}_db
