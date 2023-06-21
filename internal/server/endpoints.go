@@ -51,7 +51,11 @@ func (s *Server) MiscV2HealthcheckGet(c *gin.Context) {
 	if err != nil {
 		errs = append(errs, "cannot ping database")
 	}
-	c.JSON(200, helpers.ErrorsArray{Errors: errs})
+	if len(errs) == 0 {
+		c.JSON(200, helpers.ErrorsArray{Errors: errs})
+		return
+	}
+	c.JSON(500, helpers.ErrorsArray{Errors: errs})
 	return
 }
 

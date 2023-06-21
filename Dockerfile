@@ -18,13 +18,15 @@ RUN go mod verify
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/ ./cmd/...
 
-FROM scratch
+FROM alpine:latest
 
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
 COPY --from=builder /go/src/app/bin/cmd /go/bin/api
+
+RUN apk --update --no-cache add curl jq bash && rm -rf /var/cache/apk/*
 
 USER small-user:small-user
 
