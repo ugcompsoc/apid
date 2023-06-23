@@ -33,8 +33,14 @@ jobs:
           script: |
             STRIPPED_TAG_NAME=$(echo "${{ inputs.tag_name }}" | sed -e 's#/#\-#g' -e 's#\.#\-#g')
 
+            rm -R /tmp/ugcompsoc_apid_prod || true
+            cp -R /opt/ugcompsoc_apid/v[0-9]-[0-9]-[0-9] /tmp/ugcompsoc_apid_prod
+
             DOCKER_RESULTS=$(docker container ls -q --filter name=$STRIPPED_TAG_NAME)
             [ -z "$DOCKER_RESULTS" ] || docker rm $(docker container ls -q --filter name=$STRIPPED_TAG_NAME) --force
+
+            rm -R /opt/ugcompsoc_apid/${STRIPPED_TAG_NAME} || true
+            [[ ${STRIPPED_TAG_NAME} == "prerelease" ]] && rm -R /opt/ugcompsoc_apid/*${STRIPPED_TAG_NAME}* || true
 
             docker image prune -a -f
             docker network prune -f
