@@ -99,13 +99,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/helpers.ErrorsArray"
+                            "$ref": "#/definitions/helpers.Empty"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/helpers.Error"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ErrorsArray"
                         }
                     }
                 }
@@ -133,6 +139,9 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "helpers.Empty": {
+            "type": "object"
+        },
         "helpers.Error": {
             "type": "object",
             "properties": {

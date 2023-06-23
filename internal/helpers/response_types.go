@@ -1,5 +1,8 @@
 package helpers
 
+type Empty struct {
+}
+
 type ErrorsArray struct {
 	Errors []string `json:"errors" example:"cannot ping database,scheduler offline"`
 }

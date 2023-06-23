@@ -43,5 +43,4 @@ testcases:
     timeout: 5
     assertions:
     - result.statuscode ShouldEqual 200
-    - result.bodyjson ShouldContainKey "errors"
-    - result.bodyjson.errors ShouldBeEmpty
+    - result.bodyjson ShouldNotContainKey "errors"

@@ -1,5 +1,7 @@
 basePath: /
 definitions:
+  helpers.Empty:
+    type: object
   helpers.Error:
     properties:
       error:
@@ -83,11 +85,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/helpers.ErrorsArray'
+            $ref: '#/definitions/helpers.Empty'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/helpers.Error'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/helpers.ErrorsArray'
       summary: Get health of API
       tags:
       - V2

@@ -42,7 +42,8 @@ func (s *Server) RootV2Get(c *gin.Context) {
 // @Description				Responds with any service errors
 // @Tags					V2
 // @Produce					json
-// @Success					200	{object}	helpers.ErrorsArray
+// @Success					200	{object}	helpers.Empty
+// @Success					503	{object}	helpers.ErrorsArray
 // @Failure					500	{object}	helpers.Error
 // @Router					/v2/healthcheck [get]
 func (s *Server) MiscV2HealthcheckGet(c *gin.Context) {
@@ -52,10 +53,10 @@ func (s *Server) MiscV2HealthcheckGet(c *gin.Context) {
 		errs = append(errs, "cannot ping database")
 	}
 	if len(errs) == 0 {
-		c.JSON(200, helpers.ErrorsArray{Errors: errs})
+		c.JSON(http.StatusOK, helpers.Empty{})
 		return
 	}
-	c.JSON(500, helpers.ErrorsArray{Errors: errs})
+	c.JSON(http.StatusServiceUnavailable, helpers.ErrorsArray{Errors: errs})
 	return
 }
 
