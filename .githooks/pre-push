@@ -20,7 +20,7 @@ if [ -s go.mod ]; then
         exit 1
     fi
 
-    go test $(go list ./... | grep -vw "cmd$" | grep -v internal/services/database_test_utils) -coverprofile cover.out 
+    go test $(go list ./... | grep -vw "apid/cmd$" | grep -v internal/services/database_test_utils) -coverprofile cover.out 
     TOTAL_COVERAGE=$(go tool cover -func cover.out | grep total | grep -Eo '[0-9]+\.[0-9]+')
     if (( $(echo "$TOTAL_COVERAGE $COVERAGE_THRESHOLD" | awk '{print ($1 > $2)}') )); then
         echo "Code coverage is above $COVERAGE_THRESHOLD"
