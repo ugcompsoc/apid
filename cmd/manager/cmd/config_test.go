@@ -109,6 +109,13 @@ func TestVerifyConfig(t *testing.T) {
 				os.Remove(absoluteFilePath)
 			},
 		},
+		{
+			name:       "an invalid filename will cause an issue",
+			args:       append(argsWithDirectory, "--filename=apid"),
+			out:        "The filename is not in the form [NAME].yml",
+			BeforeWork: func() {},
+			AfterWork:  func() {},
+		},
 	}
 
 	for _, run := range runs {

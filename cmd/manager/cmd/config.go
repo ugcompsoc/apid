@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"path/filepath"
+	"regexp"
 
 	"gopkg.in/yaml.v2"
 
@@ -52,6 +53,19 @@ func VerifyConfig(cmd *cobra.Command, args []string) {
 	debug, _ := cmd.Flags().GetBool("debug")
 	directory, _ := cmd.Flags().GetString("directory")
 	filename, _ := cmd.Flags().GetString("filename")
+	filenameRegex, err := regexp.Compile("^([a-z]+).yml$")
+	// unless this regex is changes, this error will never be reached
+	if err != nil {
+		if debug {
+			cmd.Printf("Error: %s\n", err)
+		}
+		cmd.Printf("An error occured while generating the filename regex\n")
+		return
+	}
+	if !filenameRegex.MatchString(filename) {
+		cmd.Print("The filename is not in the form [NAME].yml")
+		return
+	}
 
 	absoluteFilePath := filepath.Join(directory, filename)
 	file, err := ioutil.ReadFile(absoluteFilePath)
