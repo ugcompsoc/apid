@@ -43,21 +43,18 @@ func TestVerifyConfig(t *testing.T) {
 		args       []string
 		out        string
 		BeforeWork func()
-		AfterWork  func()
 	}{
 		{
 			name:       "prints file not found error",
 			args:       argsWithDirectory,
 			out:        "No file exists at path: config_test/apid.yml",
 			BeforeWork: func() {},
-			AfterWork:  func() {},
 		},
 		{
 			name:       "prints file not found error and debug error",
 			args:       append(argsWithDirectory, []string{"--debug"}...),
 			out:        "Error: open config_test/apid.yml: no such file or directory\nNo file exists at path: config_test/apid.yml",
 			BeforeWork: func() {},
-			AfterWork:  func() {},
 		},
 		{
 			name: "prints file is empty",
@@ -67,9 +64,6 @@ func TestVerifyConfig(t *testing.T) {
 				_, err := os.Create(absoluteFilePath)
 				assert.NoError(t, err, "expected no error in creating testing file")
 			},
-			AfterWork: func() {
-				os.Remove(absoluteFilePath)
-			},
 		},
 		{
 			name: "prints file is empty with debug flag",
@@ -78,9 +72,6 @@ func TestVerifyConfig(t *testing.T) {
 			BeforeWork: func() {
 				_, err := os.Create(absoluteFilePath)
 				assert.NoError(t, err, "expected no error in creating testing file")
-			},
-			AfterWork: func() {
-				os.Remove(absoluteFilePath)
 			},
 		},
 		{
@@ -92,9 +83,6 @@ func TestVerifyConfig(t *testing.T) {
 				file.Write([]byte("b"))
 				assert.NoError(t, err, "expected no error in creating testing file")
 			},
-			AfterWork: func() {
-				os.Remove(absoluteFilePath)
-			},
 		},
 		{
 			name: "prints could not unmarshal if file contains a malformed variable and debug error",
@@ -105,16 +93,12 @@ func TestVerifyConfig(t *testing.T) {
 				file.Write([]byte("b"))
 				assert.NoError(t, err, "expected no error in creating testing file")
 			},
-			AfterWork: func() {
-				os.Remove(absoluteFilePath)
-			},
 		},
 		{
 			name:       "an invalid filename will cause an issue",
 			args:       append(argsWithDirectory, "--filename=apid"),
 			out:        "The filename is not in the form [NAME].yml",
 			BeforeWork: func() {},
-			AfterWork:  func() {},
 		},
 	}
 
@@ -124,7 +108,9 @@ func TestVerifyConfig(t *testing.T) {
 			out, err := execute(t, NewRootCmd(), run.args...)
 			assert.NoError(t, err, "expected no error running manager")
 			assert.Equal(t, run.out, out, "unexpected manager output")
-			run.AfterWork()
+			if _, err := os.Stat(directory + "/apid.yml"); err == nil {
+				os.Remove(directory + "/apid.yml")
+			}
 		})
 	}
 
