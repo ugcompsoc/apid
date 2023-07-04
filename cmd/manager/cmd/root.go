@@ -33,4 +33,5 @@ func Execute() {
 
 func init() {
 	rootCmd = NewRootCmd()
+	rootCmd.CompletionOptions.DisableDefaultCmd = true
 }
