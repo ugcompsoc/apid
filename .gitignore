@@ -1,3 +1,7 @@
 venom*.log
 test_results
 *.out
+
+cmd/manager/apid.yml
+cmd/manager/config_create_test
+cmd/manager/config_test
